@@ -254,3 +254,13 @@ aws s3 cp "s3://$UI_BUCKET/index.html" "s3://$UI_BUCKET/index.html" --metadata-d
 run this bugger. Also talk about how this would be run by jenkins or something in the real world.
 
 Just to avoid fun with cache invalidation and favicon fun go ahead and spin up gimp to create a crappy logo
+
+next get push state history working
+
+```
+  custom_error_response {
+    error_code         = 404
+    response_code      = 200
+    response_page_path = "/index.html"
+  }
+```

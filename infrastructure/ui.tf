@@ -39,6 +39,12 @@ resource "aws_cloudfront_distribution" "ui_cdn" {
     }
   }
 
+  custom_error_response {
+    error_code         = 404
+    response_code      = 200
+    response_page_path = "/index.html"
+  }
+
   origin {
     origin_id   = "ui_bucket"
     domain_name = aws_s3_bucket.ui_bucket.bucket_regional_domain_name
