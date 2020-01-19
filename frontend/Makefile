@@ -4,6 +4,7 @@ dist/index.html: $(shell find src) $(shell find public)
 	npm run build
 
 .PHONY: test
+test:
 	npm run test:unit
 
 .PHONY: clean
