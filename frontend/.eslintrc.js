@@ -11,7 +11,7 @@ module.exports = {
   rules: {
     'no-console': 'error',
     'no-debugger': 'error',
-    'space-before-function-paren': ["error", "never"]
+    'space-before-function-paren': ['error', 'never']
   },
   parserOptions: {
     parser: '@typescript-eslint/parser'

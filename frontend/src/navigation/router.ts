@@ -1,14 +1,20 @@
-import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Home from '../home/Home.vue'
+import Home from '@/home/Home.vue'
+import Search from '@/search/SearchDisplay.vue'
 
-Vue.use(VueRouter)
+export const HOME_ROUTE_NAME = 'home'
+export const SEARCH_ROUTE_NAME = 'search'
 
 const routes = [
   {
     path: '/',
-    name: 'home',
+    name: HOME_ROUTE_NAME,
     component: Home
+  },
+  {
+    path: '/search',
+    name: SEARCH_ROUTE_NAME,
+    component: Search
   }
 ]
 
