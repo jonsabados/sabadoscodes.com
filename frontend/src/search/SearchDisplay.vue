@@ -1,5 +1,5 @@
 <template>
-  <div  class="container-fluid">
+  <main class="container-fluid" role="main">
     <h1>Search Results</h1>
     <div v-if="isLoading">
       <loading id="searchResultLoadingIndicator" />
@@ -15,7 +15,7 @@
     <div v-else>
       <h3 id="noResultsFound">No results found.</h3>
     </div>
-  </div>
+  </main>
 </template>
 
 <script lang="ts">

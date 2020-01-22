@@ -1,20 +1,18 @@
 <template>
-  <div class="container-fluid">
-    <h1>Main Heading Here</h1>
+  <main class="container-fluid" role="main">
+    <h1>sabadoscodes.com</h1>
     <p>
-      Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
-      magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-      consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-      Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum
+      Hello, and welcome to sabadoscodes.com, my personal development playground. Right now it isn't much more than
+      a basic <a href="https://vuejs.org/" target="_blank">Vue.js</a> application pushed to an S3 bucket sitting behind
+      CloudFront, but thanks to the various AWS services available these days its also a place where I can push actual
+      code out to fuss with on the cheap.
     </p>
 
     <p>
-      Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
-      magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-      consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-      Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum
+      For those that are curious all the code behind this site & the terraform for the infrastructure is available in
+      GitHub <a href="https://github.com/jonsabados/sabadoscodes.com" target="_blank">here</a>.
     </p>
-  </div>
+  </main>
 </template>
 
 <style lang="scss">

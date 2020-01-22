@@ -1,19 +1,16 @@
 <template>
-  <nav role="navigation" class="navbar navbar-expand-lg navbar-light bg-light">
+  <nav role="navigation" class="navbar navbar-expand-lg sticky-top navbar-dark bg-dark" id="mainNav">
     <ul class="navbar-nav mr-auto">
       <li class="nav-item">
-        <router-link to="/" class="nav-link">Home</router-link>
+        <router-link :to="{name: 'home'}" class="nav-link">Home</router-link>
       </li>
       <li class="nav-item">
-        <router-link to="/stuff" class="nav-link">Stuff</router-link>
-      </li>
-      <li class="nav-item">
-        <router-link to="/about" class="nav-link">About</router-link>
+        <router-link :to="{name: 'articles'}" class="nav-link">Articles</router-link>
       </li>
     </ul>
     <form class="form-inline my-2 my-lg-0" v-on:submit.prevent="executeSearch">
       <input v-model="query" class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" id="searchInput">
-      <button class="btn btn-outline-dark my-2 my-sm-0" type="submit" :disabled="disableSearch" id="searchButton">Search</button>
+      <button class="btn my-2 my-sm-0 btn-light" type="submit" :disabled="disableSearch" id="searchButton">Search</button>
     </form>
   </nav>
 </template>
@@ -49,5 +46,9 @@ export default class MainNav extends Vue {
 <style lang="scss">
 .btn:disabled{
   cursor: default;
+}
+
+#mainNav .router-link-active {
+  font-weight: bold;
 }
 </style>

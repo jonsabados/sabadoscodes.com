@@ -34,5 +34,6 @@ export default class App extends Vue {
 </script>
 
 <style lang="scss">
+$dark: #223e5d;
 @import "~bootstrap/scss/bootstrap";
 </style>
