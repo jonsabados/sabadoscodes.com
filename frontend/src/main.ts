@@ -6,13 +6,24 @@ import { SearchStore } from '@/search/SearchStore'
 import { AppStore } from '@/app/AppStore'
 import VueRouter from 'vue-router'
 import Bootstrap from 'bootstrap-vue'
+// @ts-ignore
+import VueGtag from 'vue-gtag'
 
 Vue.config.productionTip = false
 Vue.use(Vuex)
 Vue.use(VueRouter)
 Vue.use(Bootstrap)
 
-interface RootState {}
+interface RootState {
+}
+
+Vue.use(VueGtag, {
+  config: {
+    id: process.env.VUE_APP_GOOGLE_ANALYTICS_ID
+  },
+  appName: 'sabadoscodes.com',
+  pageTrackerScreenviewEnabled: true
+}, router)
 
 const store = new Vuex.Store<RootState>({
   state: {},

@@ -1,6 +1,9 @@
 .DEFAULT_GOAL := dist/index.html
 
-dist/index.html: $(shell find src) $(shell find public)
+.env.local:
+	./gen_env.sh
+
+dist/index.html: $(shell find src) $(shell find public) .env.local
 	npm run build
 
 .PHONY: test
@@ -12,5 +15,5 @@ clean:
 	rm -rf dist/
 
 .PHONY: run
-run:
+run: .env.local
 	npm run serve

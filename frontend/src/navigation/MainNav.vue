@@ -7,6 +7,9 @@
       <li class="nav-item">
         <router-link :to="{name: 'articles'}" class="nav-link">Articles</router-link>
       </li>
+      <li class="nav-item">
+        <router-link :to="{name: 'about'}" class="nav-link">About</router-link>
+      </li>
     </ul>
     <form class="form-inline my-2 my-lg-0" v-on:submit.prevent="executeSearch">
       <input v-model="query" class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" id="searchInput">

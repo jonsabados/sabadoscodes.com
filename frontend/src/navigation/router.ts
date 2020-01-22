@@ -1,5 +1,6 @@
 import VueRouter from 'vue-router'
 import Home from '@/home/Home.vue'
+import About from '@/about/About.vue'
 import Search from '@/search/SearchDisplay.vue'
 import Articles from '@/articles/Articles.vue'
 import ArticlesHome from '@/articles/ArticlesHome.vue'
@@ -7,6 +8,7 @@ import Article from '@/articles/Article.vue'
 
 export const HOME_ROUTE_NAME = 'home'
 export const SEARCH_ROUTE_NAME = 'search'
+export const ABOUT_ROUTE_NAME = 'about'
 export const ARTICLES_HOME_ROUTE_NAME = 'articles'
 export const ARTICLE_ROUTE_NAME = 'article'
 
@@ -31,6 +33,11 @@ const routes = [
         component: Article
       }
     ]
+  },
+  {
+    path: '/about',
+    name: ABOUT_ROUTE_NAME,
+    component: About
   },
   {
     path: '/search',

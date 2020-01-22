@@ -5,7 +5,8 @@
       Hello, and welcome to sabadoscodes.com, my personal development playground. Right now it isn't much more than
       a basic <a href="https://vuejs.org/" target="_blank">Vue.js</a> application pushed to an S3 bucket sitting behind
       CloudFront, but thanks to the various AWS services available these days its also a place where I can push actual
-      code out to fuss with on the cheap.
+      code out to fuss with on the cheap. If you want to know more about me check out the
+      <router-link :to="{name: 'about'}">about page</router-link>.
     </p>
 
     <p>

@@ -13,11 +13,12 @@ it should prompt you for the state bucket name.
 
 There are a couple of things that must be setup by hand before `terraform apply` can be run. First, the domain name
 to use must be registered in route53, and then an ACM certificate for that domain should be requested. This 
-certificate should also have an alternate name with a www. prefix. Finally two parameters need to be entered in SSM,
+certificate should also have an alternate name with a www. prefix. Finally some parameters need to be entered in SSM,
 they are:
  * `sabadoscodes.domain`: This should be a string and be set to the target domain name (no www prefix)
  * `sabadoscodes.uibucket`: This should be the name of the bucket to use for hosting front end static assets. This 
 needs to be a globally unique name, but the bucket shouldn't exist as terraform will create it.
+ * `sabadoscodes.googleanalytics.id`: This should be an id to use with google analytics (used during front end builds)
 
 ### Creating the infrastructure
 
