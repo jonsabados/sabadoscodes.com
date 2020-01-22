@@ -40,7 +40,7 @@
       </p>
       <p>The front is a no brainer - well just stuff html and assets in a
         <a href="https://aws.amazon.com/s3/" target="_blank">S3 bucket</a> and stick
-        <a href="https://aws.amazon.com/cloudfront/" target="_blank">CloudFront</a> in front of it. For now
+        <a href="https://aws.amazon.com/cloudfront/" target="_blank">CloudFront</a> in front of it.
       </p>
       <p>
         Using <a href="https://www.terraform.io/" target="_blank">terraform</a> to define all of the AWS resources will
@@ -287,7 +287,7 @@ resource "aws_cloudfront_distribution" "ui_cdn" {
         quality of life thing. CloudFront modifications will leave the distribution in a state of updating for quite a
         while and without that terraform will wait for that which can be painful. Next, since were on a budget and
         not expecting traffic from outside the US is <code>price_class = "PriceClass_100"</code> which will make
-        international requests a bit more sluggish than they code be, but will save $.
+        international requests a bit more sluggish than they could be, but will save $.
       </p>
       <p>
         At this point running <code>terraform apply</code> will create the S3 bucket and CloudFront distribution. But
@@ -449,7 +449,10 @@ aws s3 cp "s3://$UI_BUCKET/index.html" "s3://$UI_BUCKET/index.html" --metadata-d
         and another <code>terraform apply</code> gets things up and running. At this point its pretty static and the
         application backend has yet to be touched, but its a good starting point that can be iterated on.
       </p>
-
+      <p>
+        UPDATE: The state of the repo when this article was written can be seen via
+        <a href="https://github.com/jonsabados/sabadoscodes.com/releases/tag/first_article" target="_blank">this tag</a>.
+      </p>
     </div>
     <div v-else>
       <h1>Article Not Found</h1>
