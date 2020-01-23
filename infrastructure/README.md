@@ -19,6 +19,9 @@ they are:
  * `sabadoscodes.uibucket`: This should be the name of the bucket to use for hosting front end static assets. This 
 needs to be a globally unique name, but the bucket shouldn't exist as terraform will create it.
  * `sabadoscodes.googleanalytics.id`: This should be an id to use with google analytics (used during front end builds)
+ * `sabadoscodes.email.support`: This should be an email address that emails to support@{sabadoscodes.domain} are sent
+    too. When terraform runs a verified email address will be created for this, you will need to check the inbox and
+    click the verification link that SES sends
 
 ### Creating the infrastructure
 

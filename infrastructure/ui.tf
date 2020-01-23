@@ -69,7 +69,7 @@ resource "aws_cloudfront_distribution" "ui_cdn" {
 resource "aws_route53_record" "default_domain_name" {
   name    = data.aws_ssm_parameter.domain_name.value
   type    = "A"
-  zone_id = data.aws_route53_zone.ui_domain.zone_id
+  zone_id = data.aws_route53_zone.main_domain.zone_id
 
   alias {
     name                   = aws_cloudfront_distribution.ui_cdn.domain_name
@@ -81,7 +81,7 @@ resource "aws_route53_record" "default_domain_name" {
 resource "aws_route53_record" "www_domain_name" {
   name    = "www"
   type    = "CNAME"
-  zone_id = data.aws_route53_zone.ui_domain.zone_id
+  zone_id = data.aws_route53_zone.main_domain.zone_id
   records = [aws_cloudfront_distribution.ui_cdn.domain_name]
   ttl     = 60
 }

@@ -6,19 +6,19 @@ npm install
 ```
 ### Compiles and hot-reloads for development
 ```
-make run
+npm run build
 ```
 Note, builds need an SSM parameter entered for the google analytics id to use. See the See 
 [the infrastructure README.md](../infrastructure/README.md) for more. 
 ### Compiles and minifies for production
 ```
-make
+npm run build
 ```
 Note, builds need an SSM parameter entered for the google analytics id to use. See the See 
 [the infrastructure README.md](../infrastructure/README.md) for more. 
 ### Run your unit tests
 ```
-make test
+make npm run test:unit
 ```
 
 ### Lints and fixes files

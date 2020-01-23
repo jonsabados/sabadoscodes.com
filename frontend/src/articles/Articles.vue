@@ -6,6 +6,7 @@
           <h3>Articles</h3>
           <ul class="nav flex-column">
             <li class="nav-item">
+              <router-link :to="{name: 'article', params: {id: 1}}" class="nav-link">Setting up a support email address</router-link>
               <router-link :to="{name: 'article', params: {id: 0}}" class="nav-link">Spinning up sabadoscodes.com</router-link>
             </li>
           </ul>
@@ -15,7 +16,6 @@
         <router-view />
       </main>
     </div>
-
   </div>
 </template>
 
