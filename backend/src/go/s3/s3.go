@@ -5,6 +5,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
+	"github.com/aws/aws-xray-sdk-go/xray"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog"
 	"io"
@@ -40,5 +41,7 @@ func NewObjectRemover(client *s3.S3) ObjectRemover {
 }
 
 func RawClient(sess *session.Session) *s3.S3 {
-	return s3.New(sess)
+	ret := s3.New(sess)
+	xray.AWS(ret.Client)
+	return ret
 }

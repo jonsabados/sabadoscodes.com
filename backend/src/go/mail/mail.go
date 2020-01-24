@@ -6,6 +6,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/ses"
+	"github.com/aws/aws-xray-sdk-go/xray"
 	"github.com/jonsabados/sabadoscodes.com/s3"
 	"github.com/jordan-wright/email"
 	"github.com/pkg/errors"
@@ -43,7 +44,7 @@ func NewSender(sesClient *ses.SES) Sender {
 		}
 
 		zerolog.Ctx(ctx).Info().Str("source", from).Str("to", to).Msg("sending email")
-		_, err = sesClient.SendRawEmail(&ses.SendRawEmailInput{
+		_, err = sesClient.SendRawEmailWithContext(ctx, &ses.SendRawEmailInput{
 			Source: aws.String(from),
 			Destinations: []*string{
 				aws.String(to),
@@ -94,5 +95,7 @@ func NewForwarder(mailBucket string, fetchObject s3.ObjectFetcher, sendEmail Sen
 }
 
 func NewRawClient(sess *session.Session) *ses.SES {
-	return ses.New(sess)
+	ret := ses.New(sess)
+	xray.AWS(ret.Client)
+	return ret
 }
