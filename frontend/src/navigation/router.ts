@@ -5,12 +5,14 @@ import Search from '@/search/SearchDisplay.vue'
 import Articles from '@/articles/Articles.vue'
 import ArticlesHome from '@/articles/ArticlesHome.vue'
 import Article from '@/articles/Article.vue'
+import Privacy from '@/legal/Privacy.vue'
 
 export const HOME_ROUTE_NAME = 'home'
 export const SEARCH_ROUTE_NAME = 'search'
 export const ABOUT_ROUTE_NAME = 'about'
 export const ARTICLES_HOME_ROUTE_NAME = 'articles'
 export const ARTICLE_ROUTE_NAME = 'article'
+export const PRIVACY_ROUTE_NAME = 'privacy'
 
 const routes = [
   {
@@ -43,6 +45,11 @@ const routes = [
     path: '/search',
     name: SEARCH_ROUTE_NAME,
     component: Search
+  },
+  {
+    path: '/privacy',
+    name: PRIVACY_ROUTE_NAME,
+    component: Privacy
   }
 ]
 

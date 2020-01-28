@@ -21,6 +21,7 @@ Vue.use(VueGtag, {
   config: {
     id: process.env.VUE_APP_GOOGLE_ANALYTICS_ID
   },
+  bootstrap: false,
   appName: 'sabadoscodes.com',
   pageTrackerScreenviewEnabled: true
 }, router)

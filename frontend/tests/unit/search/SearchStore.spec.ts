@@ -12,7 +12,7 @@ describe('SearchStore', () => {
       executeSearchMock.mockClear()
     })
 
-    it('does happy path searches correctly', async () => {
+    it('does happy path searches correctly', async() => {
       const mockContext = new MockStoreContext()
 
       const testInstance = new SearchStore({})
@@ -26,7 +26,7 @@ describe('SearchStore', () => {
         }
       ]
 
-      executeSearchMock.mockImplementation(async (query:string) => {
+      executeSearchMock.mockImplementation(async(query:string) => {
         expect(query).toEqual(search)
         expect(mockContext.actionsSent).toEqual([
           {
@@ -65,7 +65,7 @@ describe('SearchStore', () => {
       ])
     })
 
-    it('gracefully handles errors', async () => {
+    it('gracefully handles errors', async() => {
       const mockContext = new MockStoreContext()
 
       const testInstance = new SearchStore({})
@@ -74,7 +74,7 @@ describe('SearchStore', () => {
       const search = 'testing for fun and profit'
       const expectedResult = new Error('BaNG!')
 
-      executeSearchMock.mockImplementation(async (query:string) => {
+      executeSearchMock.mockImplementation(async(query:string) => {
         expect(query).toEqual(search)
         expect(mockContext.actionsSent).toEqual([
           {
@@ -119,8 +119,8 @@ describe('SearchStore', () => {
     })
   })
 
-  describe('clearSearchResults',  () => {
-    it('it clears the query and results', async () => {
+  describe('clearSearchResults', () => {
+    it('it clears the query and results', async() => {
       const mockContext = new MockStoreContext()
 
       const testInstance = new SearchStore({})
