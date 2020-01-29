@@ -20,7 +20,8 @@ func NewRequestHandler(logger zerolog.Logger, forwardEmail mail.Forwarder, subje
 		ctx = logger.WithContext(ctx)
 		for _, e := range events.Records {
 			logger.Info().Str("id", e.SES.Mail.MessageID).Msg("processing item")
-			err := forwardEmail(ctx, e.SES.Mail.MessageID, subjectToSend, sendFrom, sendTo)
+			fullSubject := fmt.Sprintf("%s (%s)", subjectToSend, e.SES.Mail.MessageID)
+			err := forwardEmail(ctx, e.SES.Mail.MessageID, fullSubject, sendFrom, sendTo)
 			if err != nil {
 				logger.Error().Str("error", fmt.Sprintf("%+v", err)).Msg("error sending email")
 				return errors.WithStack(err)

@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"errors"
+	"fmt"
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/rs/zerolog"
 	"github.com/stretchr/testify/assert"
@@ -48,7 +49,7 @@ func Test_NewRequestHandler_BubblesErrors(t *testing.T) {
 	forwarder := func(ctx context.Context, messageID, subjectToSend, sendFrom, forwardTo string) error {
 		asserter.Equal(inputCtx, ctx)
 		asserter.Equal(messageIDOne, messageID)
-		asserter.Equal(inputSubject, subjectToSend)
+		asserter.Equal(fmt.Sprintf("%s (%s)", inputSubject, messageID), subjectToSend)
 		asserter.Equal(inputSendFrom, sendFrom)
 		asserter.Equal(inputSendTo, forwardTo)
 
@@ -96,7 +97,7 @@ func Test_NewRequestHandler_HappyPath(t *testing.T) {
 	processedMessages := make([]string, 0)
 	forwarder := func(ctx context.Context, messageID, subjectToSend, sendFrom, forwardTo string) error {
 		asserter.Equal(inputCtx, ctx)
-		asserter.Equal(inputSubject, subjectToSend)
+		asserter.Equal(fmt.Sprintf("%s (%s)", inputSubject, messageID), subjectToSend)
 		asserter.Equal(inputSendFrom, sendFrom)
 		asserter.Equal(inputSendTo, forwardTo)
 
