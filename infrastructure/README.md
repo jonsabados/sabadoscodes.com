@@ -22,6 +22,8 @@ needs to be a globally unique name, but the bucket shouldn't exist as terraform 
  * `sabadoscodes.email.support`: This should be an email address that emails to support@{sabadoscodes.domain} are sent
     too. When terraform runs a verified email address will be created for this, you will need to check the inbox and
     click the verification link that SES sends
+ * `sabadoscodes.google.oauth_client_id`: This should be a client ID for use with google sign in. This needs to be
+    created in the google developer console. Your OAuth consent screen will also need to be configured there.
 
 ### Creating the infrastructure
 

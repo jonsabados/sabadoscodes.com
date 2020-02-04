@@ -25,6 +25,7 @@ import { Vue, Component } from 'vue-property-decorator'
 import MainNav from './navigation/MainNav.vue'
 import { AppStore } from '@/app/AppStore'
 import TrackingConsent from '@/legal/TrackingConsent.vue'
+import { UserStore } from '@/user/UserStore'
 
 @Component({
   components: {
@@ -33,6 +34,10 @@ import TrackingConsent from '@/legal/TrackingConsent.vue'
   }
 })
 export default class App extends Vue {
+  created() {
+    this.$store.dispatch(UserStore.ACTION_INITIALIZE)
+  }
+
   get hasRemoteError(): boolean {
     return this.$store.state.app.errorToAck != null
   }
