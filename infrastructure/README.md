@@ -24,6 +24,8 @@ needs to be a globally unique name, but the bucket shouldn't exist as terraform 
     click the verification link that SES sends
  * `sabadoscodes.google.oauth_client_id`: This should be a client ID for use with google sign in. This needs to be
     created in the google developer console. Your OAuth consent screen will also need to be configured there.
+ * `sabadoscodes.googleconsole.txt`: This should be the value of the TXT record google console will use to verify 
+   domain ownership.
 
 ### Creating the infrastructure
 
