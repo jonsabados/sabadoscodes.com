@@ -15,6 +15,12 @@ dist/cors: dist/ $(shell find backend/src/go)
 dist/corsLambda.zip: dist/cors
 	cd dist && zip corsLambda.zip cors
 
+dist/authorizer: dist/ $(shell find backend/src/go)
+	cd backend/src/go && GOOS=linux go build -o ../../../dist/authorizer github.com/jonsabados/sabadoscodes.com/auth/authorizer
+
+dist/authorizerLambda.zip: dist/authorizer
+	cd dist && zip authorizerLambda.zip authorizer
+
 frontend/.env.local:
 	cd frontend && ./gen_env.sh
 
@@ -24,7 +30,7 @@ frontend/dist/index.html: $(shell find frontend/src) $(shell find frontend/publi
 .PHONY: test
 test:
 	cd frontend && npm run test:unit
-	cd backend/src/go && go test ./... --race
+	cd backend/src/go && go test ./... --race --cover
 
 .PHONY: clean
 clean:
@@ -35,4 +41,4 @@ clean:
 run: frontend/.env.local
 	cd frontend && npm run serve
 
-build: frontend/dist/index.html dist/forwarderLambda.zip dist/corsLambda.zip
+build: frontend/dist/index.html dist/forwarderLambda.zip dist/corsLambda.zip dist/authorizerLambda.zip

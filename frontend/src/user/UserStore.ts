@@ -29,6 +29,8 @@ export class UserStore extends VuexModule<UserState> {
     if (user.isSignedIn()) {
       this.signedIn = true
       this.idToken = user.getAuthResponse().id_token
+      // eslint-disable-next-line
+      console.log(`id token: ${this.idToken}`)
     } else {
       this.signedIn = false
       this.idToken = null

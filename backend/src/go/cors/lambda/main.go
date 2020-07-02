@@ -17,6 +17,7 @@ func newHandler(allowedDomains []string) func (ctx context.Context, request even
 		if hasOrigin && isOriginAllowed(origin, allowedDomains) {
 			headers["Access-Control-Allow-Origin"] = origin
 			headers["Access-Control-Allow-Headers"] = "Authorization"
+			headers["Access-Control-Allow-Methods"] = "OPTIONS,HEAD,GET,POST,PUT,DELETE"
 		}
 		return events.APIGatewayProxyResponse{
 			StatusCode:        http.StatusOK,

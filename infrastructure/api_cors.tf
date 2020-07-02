@@ -44,6 +44,10 @@ resource "aws_lambda_function" "cors_lambda" {
   role             = aws_iam_role.cors_lambda_role.arn
   runtime          = "go1.x"
 
+  tracing_config {
+    mode = "Active"
+  }
+
   environment {
     variables = {
       ALLOWED_ORIGINS = "https://${data.aws_ssm_parameter.domain_name.value},https://www.${data.aws_ssm_parameter.domain_name.value},http://localhost:8080"
