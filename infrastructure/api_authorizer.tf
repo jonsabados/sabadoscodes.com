@@ -52,7 +52,9 @@ resource "aws_lambda_function" "auth_lambda" {
     variables = {
       "LOG_LEVEL": "debug"
       "GOOGLE_CLIENT_ID": data.aws_ssm_parameter.google_client_id.value,
-      "BASE_RESOURCE": "arn:aws:execute-api:us-east-1:${data.aws_caller_identity.current.account_id}:${aws_api_gateway_rest_api.api.id}/${aws_api_gateway_stage.main.stage_name}"
+      "ACCOUNT_ID": data.aws_caller_identity.current.account_id,
+      "API_ID": aws_api_gateway_rest_api.api.id,
+      "STAGE": aws_api_gateway_stage.main.id
     }
   }
 }

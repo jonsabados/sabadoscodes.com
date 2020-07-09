@@ -19,15 +19,17 @@ func (c *contextAppendingTransport) RoundTrip(r *http.Request) (*http.Response, 
 }
 
 func NewContextAppendingTransport(ctx context.Context, toWrap http.RoundTripper) http.RoundTripper {
+	if toWrap == nil {
+		toWrap = http.DefaultTransport
+	}
 	return &contextAppendingTransport{ctx, toWrap}
 }
 
-func NewXRAYAwareHTTPClientFactory(baseTransport http.RoundTripper) HTTPClientFactory {
+func NewXRAYAwareHTTPClientFactory(baseClient *http.Client) HTTPClientFactory {
 	return func(ctx context.Context) *http.Client {
-		transport := NewContextAppendingTransport(ctx, baseTransport)
-		return xray.Client(&http.Client{
-			Transport: transport,
-		})
+		xrayClient := xray.Client(baseClient)
+		xrayClient.Transport = NewContextAppendingTransport(ctx, xrayClient.Transport)
+		return xrayClient
 	}
 }
 

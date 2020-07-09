@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/aws/aws-lambda-go/events"
@@ -51,11 +52,17 @@ func newHandler(baseLogger zerolog.Logger, authenticate auth.Authenticator, buil
 			return events.APIGatewayCustomAuthorizerResponse{}, err
 		}
 
+		principalStr, err := json.Marshal(principal)
+		if err != nil {
+			panic(err)
+		}
+
 		return events.APIGatewayCustomAuthorizerResponse{
 			PrincipalID:    principal.UserID,
 			PolicyDocument: policy,
+			// looks like only string values are supported in contexts - WTF?
 			Context: map[string]interface{}{
-				"principal": principal,
+				"principal": principalStr,
 			},
 		}, nil
 	}
@@ -76,10 +83,18 @@ func main() {
 	logger := zerolog.New(os.Stdout).Level(logLevel)
 
 	googleClientID := os.Getenv("GOOGLE_CLIENT_ID")
-	baseResource := os.Getenv("BASE_RESOURCE")
-	clientFactory := httputil.NewXRAYAwareHTTPClientFactory(http.DefaultTransport)
+	region := os.Getenv("AWS_REGION")
+	accountID := os.Getenv("ACCOUNT_ID")
+	apiID := os.Getenv("API_ID")
+	stage := os.Getenv("STAGE")
+	clientFactory := httputil.NewXRAYAwareHTTPClientFactory(http.DefaultClient)
 	certFetcher := auth.NewGoogleCertFetcher(auth.GoogleCertEndpoint, clientFactory)
 	authenticator := auth.NewGoogleAuthenticator(googleClientID, certFetcher)
 
-	lambda.Start(newHandler(logger, authenticator, auth.NewPolicyBuilder(baseResource)))
+	lambda.Start(newHandler(logger, authenticator, auth.NewPolicyBuilder(region, accountID, apiID, stage)))
+}
+
+// so... the stuff in the SDK has actions and resources as arrays in the statement which is fucking wrong.
+type APIGatewayCustomAuthorizerResponse struct {
+
 }

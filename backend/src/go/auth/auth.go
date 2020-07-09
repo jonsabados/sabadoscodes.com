@@ -7,9 +7,10 @@ import (
 )
 
 type Principal struct {
-	UserID string
-	Email  string
-	Name   string
+	UserID string   `json:"userId"`
+	Email  string   `json:"email"`
+	Name   string   `json:"name"`
+	Roles  []string `json:"roles"`
 }
 
 var Anonymous = Principal{
@@ -19,16 +20,16 @@ var Anonymous = Principal{
 
 type PolicyBuilder func(ctx context.Context, principal Principal) (events.APIGatewayCustomAuthorizerPolicy, error)
 
-func NewPolicyBuilder(baseResource string) PolicyBuilder {
+func NewPolicyBuilder(region string, accountID string, apiID string, stage string) PolicyBuilder {
 	return func(ctx context.Context, principal Principal) (events.APIGatewayCustomAuthorizerPolicy, error) {
 		return events.APIGatewayCustomAuthorizerPolicy{
 			Version: "2012-10-17",
 			Statement: []events.IAMPolicyStatement{
 				{
-					Action:   []string{"execute-api:Invoke"},
-					Effect:   "Allow",
-					Resource: []string {
-						fmt.Sprintf("%s/%s/%s", baseResource, "GET", "v1/self"),
+					Action: []string{"execute-api:Invoke"},
+					Effect: "Allow",
+					Resource: []string{
+						fmt.Sprintf("arn:aws:execute-api:%s:%s:%s/%s/%s/%s", region, accountID, apiID, stage, "GET", "self"),
 					},
 				},
 			},

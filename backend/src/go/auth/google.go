@@ -102,6 +102,9 @@ func (a *googleAuthenticator) authenticate(ctx context.Context, token string) (P
 		UserID: payload.Sub,
 		Email:  payload.Email,
 		Name:   payload.Name,
+		Roles:  []string {
+			"article_read",
+		},
 	}, nil
 }
 
