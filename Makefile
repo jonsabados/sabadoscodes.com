@@ -21,6 +21,12 @@ dist/authorizer: dist/ $(shell find backend/src/go)
 dist/authorizerLambda.zip: dist/authorizer
 	cd dist && zip authorizerLambda.zip authorizer
 
+dist/self: dist/ $(shell find backend/src/go)
+	cd backend/src/go && GOOS=linux go build -o ../../../dist/self github.com/jonsabados/sabadoscodes.com/self/lambda
+
+dist/selfLambda.zip: dist/self
+	cd dist && zip selfLambda.zip self
+
 frontend/.env.local:
 	cd frontend && ./gen_env.sh
 
@@ -41,4 +47,4 @@ clean:
 run: frontend/.env.local
 	cd frontend && npm run serve
 
-build: frontend/dist/index.html dist/forwarderLambda.zip dist/corsLambda.zip dist/authorizerLambda.zip
+build: frontend/dist/index.html dist/forwarderLambda.zip dist/corsLambda.zip dist/authorizerLambda.zip dist/selfLambda.zip
