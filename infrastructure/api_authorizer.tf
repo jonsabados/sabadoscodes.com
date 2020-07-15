@@ -54,7 +54,7 @@ resource "aws_lambda_function" "auth_lambda" {
       "GOOGLE_CLIENT_ID": data.aws_ssm_parameter.google_client_id.value,
       "ACCOUNT_ID": data.aws_caller_identity.current.account_id,
       "API_ID": aws_api_gateway_rest_api.api.id,
-      "STAGE": aws_api_gateway_stage.main.stage_name
+      "STAGE": "main" // referencing the stage creates a circular dependency
     }
   }
 }
