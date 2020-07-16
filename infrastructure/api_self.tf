@@ -47,6 +47,12 @@ resource "aws_lambda_function" "self_lambda" {
   tracing_config {
     mode = "Active"
   }
+
+  environment {
+    variables = {
+      ALLOWED_ORIGINS = "https://${data.aws_ssm_parameter.domain_name.value},https://www.${data.aws_ssm_parameter.domain_name.value},http://localhost:8080"
+    }
+  }
 }
 
 resource "aws_lambda_permission" "self_allow_gateway_invoke" {

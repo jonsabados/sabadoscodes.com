@@ -26,10 +26,6 @@ export default class SignIn extends Vue {
     return this.$store.state.user.signedIn
   }
 
-  get idToken(): string | null {
-    return this.$store.state.user.idToken
-  }
-
   googleLoginParams = {
     client_id: process.env.VUE_APP_GOOGLE_OAUTH_CLIENT_ID
   }

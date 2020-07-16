@@ -7,28 +7,18 @@ import (
 	"fmt"
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
-	"github.com/aws/aws-lambda-go/lambdacontext"
 	"github.com/aws/aws-xray-sdk-go/xray"
 	"github.com/jonsabados/sabadoscodes.com/auth"
 	"github.com/jonsabados/sabadoscodes.com/httputil"
-	"github.com/rs/zerolog"
+	"github.com/jonsabados/sabadoscodes.com/logging"
 	"net/http"
 	"os"
 	"strings"
 )
 
-func ctxLogger(ctx context.Context, baseLogger zerolog.Logger) (context.Context, zerolog.Logger, ) {
-	if awsCtx, inLambda := lambdacontext.FromContext(ctx); inLambda {
-		logger := baseLogger.With().Str("requestId", awsCtx.AwsRequestID).Logger()
-		return logger.WithContext(ctx), logger
-	} else {
-		return ctx, baseLogger
-	}
-}
-
-func newHandler(baseLogger zerolog.Logger, authenticate auth.Authenticator, buildPolicy auth.PolicyBuilder) func(ctx context.Context, request events.APIGatewayCustomAuthorizerRequest) (events.APIGatewayCustomAuthorizerResponse, error) {
+func newHandler(prepLogs logging.Preparer, authenticate auth.Authenticator, buildPolicy auth.PolicyBuilder) func(ctx context.Context, request events.APIGatewayCustomAuthorizerRequest) (events.APIGatewayCustomAuthorizerResponse, error) {
 	return func(ctx context.Context, request events.APIGatewayCustomAuthorizerRequest) (events.APIGatewayCustomAuthorizerResponse, error) {
-		ctx, logger := ctxLogger(ctx, baseLogger)
+		ctx, logger := prepLogs(ctx)
 
 		var principal auth.Principal
 		if strings.HasPrefix(request.AuthorizationToken, "Bearer ") {
@@ -76,12 +66,6 @@ func main() {
 		panic(err)
 	}
 
-	logLevel, err := zerolog.ParseLevel(os.Getenv("LOG_LEVEL"))
-	if err != nil {
-		panic(err)
-	}
-	logger := zerolog.New(os.Stdout).Level(logLevel)
-
 	googleClientID := os.Getenv("GOOGLE_CLIENT_ID")
 	region := os.Getenv("AWS_REGION")
 	accountID := os.Getenv("ACCOUNT_ID")
@@ -91,7 +75,7 @@ func main() {
 	certFetcher := auth.NewGoogleCertFetcher(auth.GoogleCertEndpoint, clientFactory)
 	authenticator := auth.NewGoogleAuthenticator(googleClientID, certFetcher)
 
-	lambda.Start(newHandler(logger, authenticator, auth.NewPolicyBuilder(region, accountID, apiID, stage)))
+	lambda.Start(newHandler(logging.NewPreparer(), authenticator, auth.NewPolicyBuilder(region, accountID, apiID, stage)))
 }
 
 // so... the stuff in the SDK has actions and resources as arrays in the statement which is fucking wrong.

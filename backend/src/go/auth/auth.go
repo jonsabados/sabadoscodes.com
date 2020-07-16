@@ -2,8 +2,11 @@ package auth
 
 import (
 	"context"
+	"encoding/base64"
+	"encoding/json"
 	"fmt"
 	"github.com/aws/aws-lambda-go/events"
+	"github.com/pkg/errors"
 )
 
 type Principal struct {
@@ -38,3 +41,21 @@ func NewPolicyBuilder(region string, accountID string, apiID string, stage strin
 }
 
 type Authenticator func(ctx context.Context, token string) (Principal, error)
+
+type PrincipalExtractor func(request events.APIGatewayProxyRequest) (Principal, error)
+
+func NewPrincipalExtractor() PrincipalExtractor {
+	return func(request events.APIGatewayProxyRequest) (Principal, error) {
+		encodedPrincipal := request.RequestContext.Authorizer["principal"]
+		principal, err := base64.StdEncoding.DecodeString(encodedPrincipal.(string))
+		if err != nil {
+			return Principal{}, errors.WithStack(err)
+		}
+		ret := Principal{}
+		err = json.Unmarshal(principal, &ret)
+		if err != nil {
+			return Principal{}, errors.WithStack(err)
+		}
+		return ret, nil
+	}
+}

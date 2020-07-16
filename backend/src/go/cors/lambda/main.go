@@ -5,37 +5,23 @@ import (
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/aws/aws-xray-sdk-go/xray"
+	"github.com/jonsabados/sabadoscodes.com/cors"
 	"net/http"
 	"os"
 	"strings"
 )
 
-func newHandler(allowedDomains []string) func (ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+func newHandler(headers cors.ResponseHeaderBuilder) func (ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	return func(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
-		headers := make(map[string]string)
-		origin, hasOrigin := request.Headers["Origin"]
-		if hasOrigin && isOriginAllowed(origin, allowedDomains) {
-			headers["Access-Control-Allow-Origin"] = origin
-			headers["Access-Control-Allow-Headers"] = "Authorization"
-			headers["Access-Control-Allow-Methods"] = "OPTIONS,HEAD,GET,POST,PUT,DELETE"
-		}
 		return events.APIGatewayProxyResponse{
-			StatusCode:        http.StatusOK,
-			Headers:           headers,
+			StatusCode:        http.StatusNoContent,
+			Headers:           headers(request.Headers),
 			Body:              "",
 			IsBase64Encoded:   false,
 		}, nil
 	}
 }
 
-func isOriginAllowed(origin string, allowedDomains []string) bool {
-	for _, o := range allowedDomains {
-		if origin == o {
-			return true
-		}
-	}
-	return false
-}
 
 func main() {
 	err := xray.Configure(xray.Config{
@@ -46,5 +32,5 @@ func main() {
 	}
 
 	allowedDomains := strings.Split(os.Getenv("ALLOWED_ORIGINS"), ",")
-	lambda.Start(newHandler(allowedDomains))
+	lambda.Start(newHandler(cors.NewResponseHeaderBuilder(allowedDomains)))
 }
