@@ -74,6 +74,7 @@ func (a *googleAuthenticator) authenticate(ctx context.Context, token string) (P
 		err := rsa.VerifyPKCS1v15(c.PublicKey.(*rsa.PublicKey), crypto.SHA256, hashSum, signature)
 		if err == nil {
 			valid = true
+			break
 		} else {
 			logger.Debug().Err(err).Str("cert", base64.StdEncoding.EncodeToString(c.Signature)).Msg("jwt verification failed using cert")
 		}

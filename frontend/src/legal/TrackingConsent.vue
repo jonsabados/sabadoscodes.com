@@ -37,7 +37,7 @@ export default class TrackingConsent extends Vue {
   }
 
   loadInitialState() {
-    if (this.$route.query.skipTracking) {
+    if (this.$route.query.skipTracking || isBot()) {
       this.gatherConsent = false
       return
     }
@@ -62,6 +62,10 @@ export default class TrackingConsent extends Vue {
     Cookies.set(consentCookie, okToTrackValue)
     startAnalytics()
   }
+}
+
+function isBot():boolean {
+  return /bot|googlebot|crawler|spider|robot|crawling/i.test(navigator.userAgent)
 }
 </script>
 

@@ -244,6 +244,9 @@ func TestNewGoogleAuthenticator_HappyPath_FirstKey(t *testing.T) {
 		UserID: subject,
 		Email:  email,
 		Name:   name,
+		Roles: []string{
+			"article_read",
+		},
 	}, res)
 }
 
@@ -314,6 +317,9 @@ func TestNewGoogleAuthenticator_HappyPath_NotFirstKey(t *testing.T) {
 		UserID: subject,
 		Email:  email,
 		Name:   name,
+		Roles: []string{
+			"article_read",
+		},
 	}, res)
 }
 
@@ -389,6 +395,9 @@ func TestNewGoogleAuthenticator_HappyPath_Caching(t *testing.T) {
 		UserID: subject,
 		Email:  email,
 		Name:   name,
+		Roles: []string{
+			"article_read",
+		},
 	}, res)
 
 	asserter.Equal(1, fetchCount)
@@ -399,6 +408,9 @@ func TestNewGoogleAuthenticator_HappyPath_Caching(t *testing.T) {
 		UserID: subject,
 		Email:  email,
 		Name:   name,
+		Roles: []string{
+			"article_read",
+		},
 	}, res)
 	asserter.Equal(1, fetchCount)
 
@@ -409,6 +421,9 @@ func TestNewGoogleAuthenticator_HappyPath_Caching(t *testing.T) {
 		UserID: subject,
 		Email:  email,
 		Name:   name,
+		Roles: []string{
+			"article_read",
+		},
 	}, res)
 	asserter.Equal(2, fetchCount)
 }
@@ -487,6 +502,9 @@ func TestNewGoogleAuthenticator_FailureToFetchCertOnFirstTry(t *testing.T) {
 		UserID: subject,
 		Email:  email,
 		Name:   name,
+		Roles: []string{
+			"article_read",
+		},
 	}, res)
 }
 
