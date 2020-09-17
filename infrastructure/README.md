@@ -12,8 +12,7 @@ it should prompt you for the state bucket name.
 ### Required manual configuration
 
 There are a couple of things that must be setup by hand before `terraform apply` can be run. First, the domain name
-to use must be registered in route53, and then an ACM certificate for that domain should be requested. This 
-certificate should also have an alternate name with a www. prefix. Finally some parameters need to be entered in SSM,
+to use must be registered in route53, and then some parameters need to be entered in SSM,
 they are:
  * `sabadoscodes.domain`: This should be a string and be set to the target domain name (no www prefix)
  * `sabadoscodes.uibucket`: This should be the name of the bucket to use for hosting front end static assets. This 
@@ -29,4 +28,6 @@ needs to be a globally unique name, but the bucket shouldn't exist as terraform 
 
 ### Creating the infrastructure
 
-After running `terraform init` once and then doing the required manual steps: `terraform apply`
+After running `terraform init` once and then doing the required manual steps: `terraform apply`. Some items will
+fail to apply due to ACM certificate validation needing some time to go through - give it a few minutes and then run
+`terraform apply` again. You may also look in the ACM console and watch for the certificates to be issued.

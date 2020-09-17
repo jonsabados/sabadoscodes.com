@@ -1,7 +1,7 @@
-data "aws_ssm_parameter" "ui_bucket_name" {
-  name = "sabadoscodes.uibucket"
+locals {
+  workspace_domain_prefix = terraform.workspace == "default" ? "" : "${terraform.workspace}."
 }
 
-data "aws_acm_certificate" "website_cert" {
-  domain = data.aws_ssm_parameter.domain_name.value
+data "aws_ssm_parameter" "ui_bucket_name" {
+  name = "sabadoscodes.uibucket"
 }

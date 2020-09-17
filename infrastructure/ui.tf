@@ -7,6 +7,27 @@ resource "aws_s3_bucket" "ui_bucket" {
   }
 }
 
+resource "aws_acm_certificate" "ui_cert" {
+  domain_name               = "${local.workspace_domain_prefix}${data.aws_ssm_parameter.domain_name.value}"
+  subject_alternative_names = [
+    "${terraform.workspace == "default" ? "www." : "www-"}${local.workspace_domain_prefix}${data.aws_ssm_parameter.domain_name.value}"
+  ]
+  validation_method         = "DNS"
+
+  tags = {
+    Workspace = terraform.workspace
+  }
+}
+
+resource "aws_route53_record" "ui_cert_verification_record" {
+  count   = 2
+  name    = aws_acm_certificate.ui_cert.domain_validation_options[count.index].resource_record_name
+  type    = aws_acm_certificate.ui_cert.domain_validation_options[count.index].resource_record_type
+  zone_id = data.aws_route53_zone.main_domain.id
+  records = [aws_acm_certificate.ui_cert.domain_validation_options[count.index].resource_record_value]
+  ttl     = 300
+}
+
 resource "aws_cloudfront_origin_access_identity" "default" {}
 
 resource "aws_cloudfront_distribution" "ui_cdn" {
@@ -62,7 +83,7 @@ resource "aws_cloudfront_distribution" "ui_cdn" {
 
   viewer_certificate {
     ssl_support_method  = "sni-only"
-    acm_certificate_arn = data.aws_acm_certificate.website_cert.arn
+    acm_certificate_arn = aws_acm_certificate.ui_cert.arn
   }
 }
 

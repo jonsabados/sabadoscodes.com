@@ -1,3 +1,7 @@
+locals {
+  workspace_prefix = terraform.workspace == "default" ? "" : "${terraform.workspace}-"
+}
+
 data "aws_caller_identity" "current" {}
 
 data "aws_ssm_parameter" "domain_name" {
