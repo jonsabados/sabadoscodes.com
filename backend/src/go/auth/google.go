@@ -29,7 +29,7 @@ type googleAuthenticator struct {
 	clientID   string
 }
 
-func (a *googleAuthenticator) checkCerts(ctx context.Context) {
+func (a *googleAuthenticator) currentCerts(ctx context.Context) GooglePublicCerts {
 	a.certsLock.Lock()
 	defer a.certsLock.Unlock()
 
@@ -41,12 +41,13 @@ func (a *googleAuthenticator) checkCerts(ctx context.Context) {
 			a.certs = newCerts
 		}
 	}
+
+	return a.certs
 }
 
 func (a *googleAuthenticator) authenticate(ctx context.Context, token string) (Principal, error) {
 	logger := zerolog.Ctx(ctx)
 	logger.Debug().Str("token", sanitizeTokenForLog(token)).Msg("attempting google authentication")
-	a.checkCerts(ctx)
 
 	parts := strings.Split(token, ".")
 	if len(parts) != 3 {
@@ -70,7 +71,7 @@ func (a *googleAuthenticator) authenticate(ctx context.Context, token string) (P
 	hashSum := hash.Sum(nil)
 
 	valid := false
-	for _, c := range a.certs.Certs {
+	for _, c := range a.currentCerts(ctx).Certs {
 		err := rsa.VerifyPKCS1v15(c.PublicKey.(*rsa.PublicKey), crypto.SHA256, hashSum, signature)
 		if err == nil {
 			valid = true
