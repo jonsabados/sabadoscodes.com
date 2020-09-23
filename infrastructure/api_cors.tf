@@ -27,7 +27,7 @@ data "aws_iam_policy_document" "cors_lambda_policy" {
 }
 
 resource "aws_iam_role" "cors_lambda_role" {
-  name               = "corsLambdaRole"
+  name               = "${local.workspace_prefix}corsLambdaRole"
   assume_role_policy = data.aws_iam_policy_document.assume_lambda_role_policy.json
 }
 
@@ -40,7 +40,7 @@ resource "aws_lambda_function" "cors_lambda" {
   filename         = "../dist/corsLambda.zip"
   source_code_hash = filebase64sha256("../dist/corsLambda.zip")
   handler          = "cors"
-  function_name    = "cors"
+  function_name    = "${local.workspace_prefix}cors"
   role             = aws_iam_role.cors_lambda_role.arn
   runtime          = "go1.x"
 
@@ -50,8 +50,12 @@ resource "aws_lambda_function" "cors_lambda" {
 
   environment {
     variables = {
-      ALLOWED_ORIGINS = "https://${data.aws_ssm_parameter.domain_name.value},https://www.${data.aws_ssm_parameter.domain_name.value},http://localhost:8080"
+      ALLOWED_ORIGINS = "https://${aws_acm_certificate.ui_cert.domain_name},https://${aws_acm_certificate.ui_cert.subject_alternative_names[0]},http://localhost:8080"
     }
+  }
+
+  tags = {
+    Workspace = terraform.workspace
   }
 }
 
@@ -67,6 +71,10 @@ resource "aws_lambda_permission" "cors_allow_gateway_invoke" {
 resource "aws_cloudwatch_log_group" "cors_lambda_logs" {
   name              = "/aws/lambda/${aws_lambda_function.cors_lambda.function_name}"
   retention_in_days = 7
+
+  tags = {
+    Workspace = terraform.workspace
+  }
 }
 
 resource "aws_api_gateway_resource" "wildcard" {

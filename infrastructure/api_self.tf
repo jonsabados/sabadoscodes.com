@@ -27,8 +27,12 @@ data "aws_iam_policy_document" "self_lambda_policy" {
 }
 
 resource "aws_iam_role" "self_lambda_role" {
-  name               = "selfLambdaRole"
+  name               = "${local.workspace_prefix}selfLambdaRole"
   assume_role_policy = data.aws_iam_policy_document.assume_lambda_role_policy.json
+
+  tags = {
+    Workspace = terraform.workspace
+  }
 }
 
 resource "aws_iam_role_policy" "self_lambda_role_policy" {
@@ -40,7 +44,7 @@ resource "aws_lambda_function" "self_lambda" {
   filename         = "../dist/selfLambda.zip"
   source_code_hash = filebase64sha256("../dist/selfLambda.zip")
   handler          = "self"
-  function_name    = "self"
+  function_name    = "${local.workspace_prefix}self"
   role             = aws_iam_role.self_lambda_role.arn
   runtime          = "go1.x"
 
@@ -50,8 +54,12 @@ resource "aws_lambda_function" "self_lambda" {
 
   environment {
     variables = {
-      ALLOWED_ORIGINS = "https://${data.aws_ssm_parameter.domain_name.value},https://www.${data.aws_ssm_parameter.domain_name.value},http://localhost:8080"
+      ALLOWED_ORIGINS = "https://${aws_acm_certificate.ui_cert.domain_name},https://${aws_acm_certificate.ui_cert.subject_alternative_names[0]},http://localhost:8080"
     }
+  }
+
+  tags = {
+    Workspace = terraform.workspace
   }
 }
 
@@ -67,6 +75,10 @@ resource "aws_lambda_permission" "self_allow_gateway_invoke" {
 resource "aws_cloudwatch_log_group" "self_lambda_logs" {
   name              = "/aws/lambda/${aws_lambda_function.self_lambda.function_name}"
   retention_in_days = 7
+
+  tags = {
+    Workspace = terraform.workspace
+  }
 }
 
 resource "aws_api_gateway_resource" "self" {

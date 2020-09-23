@@ -1,9 +1,13 @@
 resource "aws_s3_bucket" "ui_bucket" {
-  bucket = data.aws_ssm_parameter.ui_bucket_name.value
+  bucket = "${local.workspace_prefix}${data.aws_ssm_parameter.ui_bucket_name.value}"
   acl    = "public-read"
 
   website {
     index_document = "index.html"
+  }
+
+  tags = {
+    Workspace = terraform.workspace
   }
 }
 
@@ -36,8 +40,8 @@ resource "aws_cloudfront_distribution" "ui_cdn" {
   price_class         = "PriceClass_100"
   default_root_object = "index.html"
   aliases             = [
-    data.aws_ssm_parameter.domain_name.value,
-    "www.${data.aws_ssm_parameter.domain_name.value}"
+    aws_acm_certificate.ui_cert.domain_name,
+    aws_acm_certificate.ui_cert.subject_alternative_names[0]
   ]
 
   default_cache_behavior {
@@ -85,10 +89,14 @@ resource "aws_cloudfront_distribution" "ui_cdn" {
     ssl_support_method  = "sni-only"
     acm_certificate_arn = aws_acm_certificate.ui_cert.arn
   }
+
+  tags = {
+    Workspace = terraform.workspace
+  }
 }
 
 resource "aws_route53_record" "default_domain_name" {
-  name    = data.aws_ssm_parameter.domain_name.value
+  name    = "${local.workspace_domain_prefix}${data.aws_ssm_parameter.domain_name.value}"
   type    = "A"
   zone_id = data.aws_route53_zone.main_domain.zone_id
 
@@ -100,7 +108,7 @@ resource "aws_route53_record" "default_domain_name" {
 }
 
 resource "aws_route53_record" "www_domain_name" {
-  name    = "www"
+  name    = terraform.workspace == "default" ? "www" : "www-${terraform.workspace}"
   type    = "CNAME"
   zone_id = data.aws_route53_zone.main_domain.zone_id
   records = [aws_cloudfront_distribution.ui_cdn.domain_name]

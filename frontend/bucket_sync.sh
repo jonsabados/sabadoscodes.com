@@ -2,6 +2,12 @@
 
 UI_BUCKET=$(aws ssm get-parameter --output json --name sabadoscodes.uibucket | jq .Parameter.Value -r)
 
+WORKSPACE=$(cd ../infrastructure && terraform workspace show)
+
+if [ "$WORKSPACE" != 'default' ]; then
+  UI_BUCKET="$WORKSPACE-$UI_BUCKET"
+fi
+
 echo "Syncing dist/ to ${UI_BUCKET}"
 
 echo "Upload new"
