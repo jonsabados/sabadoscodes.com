@@ -11,6 +11,15 @@ resource "aws_s3_bucket" "ui_bucket" {
   }
 }
 
+resource "aws_s3_bucket" "article_assets_bucket" {
+  bucket = "${local.workspace_prefix}${data.aws_ssm_parameter.ui_bucket_name.value}-article-assets"
+  acl    = "public-read"
+
+  tags = {
+    Workspace = terraform.workspace
+  }
+}
+
 resource "aws_acm_certificate" "ui_cert" {
   domain_name               = "${local.workspace_domain_prefix}${data.aws_ssm_parameter.domain_name.value}"
   subject_alternative_names = [
@@ -44,6 +53,24 @@ resource "aws_cloudfront_distribution" "ui_cdn" {
     aws_acm_certificate.ui_cert.subject_alternative_names[0]
   ]
 
+  origin {
+    origin_id   = "ui_bucket"
+    domain_name = aws_s3_bucket.ui_bucket.bucket_regional_domain_name
+
+    s3_origin_config {
+      origin_access_identity = aws_cloudfront_origin_access_identity.default.cloudfront_access_identity_path
+    }
+  }
+
+  origin {
+    origin_id   = "article_assets_bucket"
+    domain_name = aws_s3_bucket.article_assets_bucket.bucket_regional_domain_name
+
+    s3_origin_config {
+      origin_access_identity = aws_cloudfront_origin_access_identity.default.cloudfront_access_identity_path
+    }
+  }
+
   default_cache_behavior {
     allowed_methods        = [
       "HEAD",
@@ -64,19 +91,30 @@ resource "aws_cloudfront_distribution" "ui_cdn" {
     }
   }
 
+  ordered_cache_behavior {
+    allowed_methods        = [
+      "HEAD",
+      "GET"
+    ]
+    cached_methods         = [
+      "HEAD",
+      "GET"
+    ]
+    path_pattern           = "article-assets/*"
+    target_origin_id       = "article_assets_bucket"
+    viewer_protocol_policy = "redirect-to-https"
+    forwarded_values {
+      query_string = false
+      cookies {
+        forward = "none"
+      }
+    }
+  }
+
   custom_error_response {
     error_code         = 404
     response_code      = 200
     response_page_path = "/index.html"
-  }
-
-  origin {
-    origin_id   = "ui_bucket"
-    domain_name = aws_s3_bucket.ui_bucket.bucket_regional_domain_name
-
-    s3_origin_config {
-      origin_access_identity = aws_cloudfront_origin_access_identity.default.cloudfront_access_identity_path
-    }
   }
 
   restrictions {

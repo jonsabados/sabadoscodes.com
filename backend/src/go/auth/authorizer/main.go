@@ -50,7 +50,7 @@ func newHandler(prepLogs logging.Preparer, authenticate auth.Authenticator, buil
 		return events.APIGatewayCustomAuthorizerResponse{
 			PrincipalID:    principal.UserID,
 			PolicyDocument: policy,
-			// looks like only string values are supported in contexts - WTF?
+			// looks like only string values are supported in contexts (or at least not complex objects)
 			Context: map[string]interface{}{
 				"principal": principalStr,
 			},
@@ -67,6 +67,7 @@ func main() {
 	}
 
 	googleClientID := os.Getenv("GOOGLE_CLIENT_ID")
+	rootUser := os.Getenv("ROOT_USER")
 	region := os.Getenv("AWS_REGION")
 	accountID := os.Getenv("ACCOUNT_ID")
 	apiID := os.Getenv("API_ID")
@@ -74,11 +75,7 @@ func main() {
 	clientFactory := httputil.NewXRAYAwareHTTPClientFactory(http.DefaultClient)
 	certFetcher := auth.NewGoogleCertFetcher(auth.GoogleCertEndpoint, clientFactory)
 	authenticator := auth.NewGoogleAuthenticator(googleClientID, certFetcher)
+	policyBuilder := auth.NewPolicyBuilder(region, accountID, apiID, stage, rootUser)
 
-	lambda.Start(newHandler(logging.NewPreparer(), authenticator, auth.NewPolicyBuilder(region, accountID, apiID, stage)))
-}
-
-// so... the stuff in the SDK has actions and resources as arrays in the statement which is fucking wrong.
-type APIGatewayCustomAuthorizerResponse struct {
-
+	lambda.Start(newHandler(logging.NewPreparer(), authenticator, policyBuilder))
 }

@@ -27,6 +27,12 @@ dist/self: dist/ $(shell find backend/src/go)
 dist/selfLambda.zip: dist/self
 	cd dist && zip selfLambda.zip self
 
+dist/articleAssetUpload: dist/ $(shell find backend/src/go)
+	cd backend/src/go && GOOS=linux go build -o ../../../dist/articleAssetUpload github.com/jonsabados/sabadoscodes.com/article/assets/upload
+
+dist/articleAssetUploadLambda.zip: dist/articleAssetUpload
+	cd dist && zip articleAssetUploadLambda.zip articleAssetUpload
+
 frontend/.env.local:
 	cd frontend && ./gen_env.sh
 
@@ -47,4 +53,4 @@ clean:
 run: frontend/.env.local
 	cd frontend && npm run serve
 
-build: frontend/dist/index.html dist/forwarderLambda.zip dist/corsLambda.zip dist/authorizerLambda.zip dist/selfLambda.zip
+build: frontend/dist/index.html dist/forwarderLambda.zip dist/corsLambda.zip dist/authorizerLambda.zip dist/selfLambda.zip dist/articleAssetUploadLambda.zip

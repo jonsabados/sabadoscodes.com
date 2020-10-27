@@ -55,6 +55,7 @@ resource "aws_lambda_function" "auth_lambda" {
   environment {
     variables = {
       "LOG_LEVEL": "debug"
+      "ROOT_USER": data.aws_ssm_parameter.root_user.value,
       "GOOGLE_CLIENT_ID": data.aws_ssm_parameter.google_client_id.value,
       "ACCOUNT_ID": data.aws_caller_identity.current.account_id,
       "API_ID": aws_api_gateway_rest_api.api.id,

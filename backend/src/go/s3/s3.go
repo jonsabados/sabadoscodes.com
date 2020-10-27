@@ -2,6 +2,7 @@ package s3
 
 import (
 	"context"
+	"fmt"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
@@ -9,6 +10,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog"
 	"io"
+	"time"
 )
 
 type ObjectFetcher func(ctx context.Context, bucket, object string) (io.ReadCloser, error)
@@ -35,6 +37,23 @@ func NewObjectRemover(client *s3.S3) ObjectRemover {
 		_, err := client.DeleteObjectWithContext(ctx, &s3.DeleteObjectInput{
 			Bucket: aws.String(bucket),
 			Key:    aws.String(object),
+		})
+		return err
+	}
+}
+
+type ObjectSaver func(ctx context.Context, bucket string, objectKey string, object io.ReadSeeker, mimeType string, cacheDuration time.Duration) error
+
+func NewObjectSaver(client *s3.S3) ObjectSaver {
+	return func(ctx context.Context, bucket string, objectKey string, object io.ReadSeeker, mimeType string, cacheDuration time.Duration) error {
+		zerolog.Ctx(ctx).Info().Str("bucket", bucket).Str("key", objectKey).Msg("saving object")
+		_, err := client.PutObjectWithContext(ctx, &s3.PutObjectInput{
+			Bucket:       aws.String(bucket),
+			Key:          aws.String(objectKey),
+			Body:         object,
+			ContentType:  aws.String(mimeType),
+			CacheControl: aws.String(fmt.Sprintf("max-age=%d", int(cacheDuration.Seconds()))),
+			ACL:          aws.String("public-read"),
 		})
 		return err
 	}

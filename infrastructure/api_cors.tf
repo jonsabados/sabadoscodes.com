@@ -26,55 +26,23 @@ data "aws_iam_policy_document" "cors_lambda_policy" {
   }
 }
 
-resource "aws_iam_role" "cors_lambda_role" {
-  name               = "${local.workspace_prefix}corsLambdaRole"
-  assume_role_policy = data.aws_iam_policy_document.assume_lambda_role_policy.json
-}
-
-resource "aws_iam_role_policy" "cors_lambda_role_policy" {
-  role   = aws_iam_role.cors_lambda_role.name
-  policy = data.aws_iam_policy_document.cors_lambda_policy.json
-}
-
-resource "aws_lambda_function" "cors_lambda" {
-  filename         = "../dist/corsLambda.zip"
-  source_code_hash = filebase64sha256("../dist/corsLambda.zip")
-  handler          = "cors"
-  function_name    = "${local.workspace_prefix}cors"
-  role             = aws_iam_role.cors_lambda_role.arn
-  runtime          = "go1.x"
-
-  tracing_config {
-    mode = "Active"
-  }
-
-  environment {
-    variables = {
-      ALLOWED_ORIGINS = "https://${aws_acm_certificate.ui_cert.domain_name},https://${aws_acm_certificate.ui_cert.subject_alternative_names[0]},http://localhost:8080"
-    }
-  }
-
-  tags = {
-    Workspace = terraform.workspace
+module "cors_lambda" {
+  source           = "./lambda"
+  workspace_prefix = local.workspace_prefix
+  lambda_name      = "cors"
+  lambda_policy    = data.aws_iam_policy_document.cors_lambda_policy.json
+  env_variables    = {
+    ALLOWED_ORIGINS = "https://${aws_acm_certificate.ui_cert.domain_name},https://${aws_acm_certificate.ui_cert.subject_alternative_names[0]},http://localhost:8080"
   }
 }
 
 resource "aws_lambda_permission" "cors_allow_gateway_invoke" {
   statement_id  = "AllowExecutionFromAPIGateway"
   action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.cors_lambda.function_name
+  function_name = module.cors_lambda.function_name
   principal     = "apigateway.amazonaws.com"
 
   source_arn = "arn:aws:execute-api:us-east-1:${data.aws_caller_identity.current.account_id}:${aws_api_gateway_rest_api.api.id}/*/OPTIONS/${aws_api_gateway_resource.wildcard.path_part}"
-}
-
-resource "aws_cloudwatch_log_group" "cors_lambda_logs" {
-  name              = "/aws/lambda/${aws_lambda_function.cors_lambda.function_name}"
-  retention_in_days = 7
-
-  tags = {
-    Workspace = terraform.workspace
-  }
 }
 
 resource "aws_api_gateway_resource" "wildcard" {
@@ -96,5 +64,5 @@ resource "aws_api_gateway_integration" "cors_integration" {
   http_method             = aws_api_gateway_method.options.http_method
   integration_http_method = "POST"
   type                    = "AWS_PROXY"
-  uri                     = aws_lambda_function.cors_lambda.invoke_arn
+  uri                     = module.cors_lambda.invoke_arn
 }

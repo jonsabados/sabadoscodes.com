@@ -25,9 +25,15 @@ needs to be a globally unique name, but the bucket shouldn't exist as terraform 
     created in the google developer console. Your OAuth consent screen will also need to be configured there.
  * `sabadoscodes.googleconsole.txt`: This should be the value of the TXT record google console will use to verify 
    domain ownership.
+ * `sabadoscodes.root_user`: This should be the email address of the root user - this user will have permissions to do
+    anything and everything within the site.
 
 ### Creating the infrastructure
 
 After running `terraform init` once and then doing the required manual steps: `terraform apply`. Some items will
 fail to apply due to ACM certificate validation needing some time to go through - give it a few minutes and then run
 `terraform apply` again. You may also look in the ACM console and watch for the certificates to be issued.
+
+### Anything that changes the API structure
+
+Any changes that 

@@ -12,6 +12,10 @@ data "aws_ssm_parameter" "google_client_id" {
   name = "sabadoscodes.google.oauth_client_id"
 }
 
+data "aws_ssm_parameter" "root_user" {
+  name = "sabadoscodes.root_user"
+}
+
 data "aws_route53_zone" "main_domain" {
   name = data.aws_ssm_parameter.domain_name.value
 }
@@ -20,6 +24,7 @@ data "aws_ssm_parameter" "google_console_txt_record" {
   name = "sabadoscodes.googleconsole.txt"
 }
 
+// TODO - remove this
 data "aws_iam_policy_document" "assume_lambda_role_policy" {
   statement {
     actions = ["sts:AssumeRole"]
