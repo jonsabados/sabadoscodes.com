@@ -17,7 +17,7 @@
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import Cookies from 'js-cookie'
-import startAnalytics from '@/legal/startAnalytics'
+import startAnalytics from '@/legal/analytics'
 
 const consentCookie = 'okToTrack'
 const okToTrackValue = 'yes'

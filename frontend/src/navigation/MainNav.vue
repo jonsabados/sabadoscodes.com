@@ -23,9 +23,10 @@
 
 <script lang="ts">
 import SignIn from '@/user/SignIn.vue'
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Vue, Watch } from 'vue-property-decorator'
 import { readQuery } from '@/search/search'
 import { SEARCH_ROUTE_NAME } from '@/navigation/router'
+import { routeChanged } from '@/legal/analytics'
 
 @Component({
   components: {
@@ -50,6 +51,11 @@ export default class MainNav extends Vue {
         query: this.query
       }
     })
+  }
+
+  @Watch('$route')
+  routeUpdated(r: any) {
+    routeChanged({ 'page_path': r.path })
   }
 }
 </script>

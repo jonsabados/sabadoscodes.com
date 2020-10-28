@@ -3,7 +3,7 @@ import { createLocalVue, shallowMount } from '@vue/test-utils'
 import TrackingConsent from '@/legal/TrackingConsent.vue'
 import VueRouter from 'vue-router'
 import BootstrapVue from 'bootstrap-vue'
-import startAnalytics from '@/legal/startAnalytics'
+import startAnalytics from '@/legal/analytics'
 
 jest.mock('js-cookie')
 jest.mock('@/legal/startAnalytics')

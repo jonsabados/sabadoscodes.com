@@ -7,7 +7,6 @@ import { AppStore } from '@/app/AppStore'
 import { UserStore } from '@/user/UserStore'
 import VueRouter from 'vue-router'
 import Bootstrap from 'bootstrap-vue'
-import VueGtag from 'vue-gtag'
 // @ts-ignore
 import { LoaderPlugin } from 'vue-google-login'
 
@@ -18,15 +17,6 @@ Vue.use(Bootstrap)
 
 interface RootState {
 }
-
-Vue.use(VueGtag, {
-  config: {
-    id: process.env.VUE_APP_GOOGLE_ANALYTICS_ID
-  },
-  bootstrap: false,
-  appName: 'sabadoscodes.com',
-  pageTrackerScreenviewEnabled: true
-}, router)
 
 Vue.use(LoaderPlugin, {
   client_id: process.env.VUE_APP_GOOGLE_OAUTH_CLIENT_ID
