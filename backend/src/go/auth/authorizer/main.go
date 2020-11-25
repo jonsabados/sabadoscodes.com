@@ -74,8 +74,9 @@ func main() {
 	stage := os.Getenv("STAGE")
 	clientFactory := httputil.NewXRAYAwareHTTPClientFactory(http.DefaultClient)
 	certFetcher := auth.NewGoogleCertFetcher(auth.GoogleCertEndpoint, clientFactory)
-	authenticator := auth.NewGoogleAuthenticator(googleClientID, certFetcher)
-	policyBuilder := auth.NewPolicyBuilder(region, accountID, apiID, stage, rootUser)
+	roleOracle := auth.NewRoleOracle(rootUser)
+	authenticator := auth.NewGoogleAuthenticator(googleClientID, certFetcher, roleOracle)
+	policyBuilder := auth.NewPolicyBuilder(region, accountID, apiID, stage)
 
 	lambda.Start(newHandler(logging.NewPreparer(), authenticator, policyBuilder))
 }

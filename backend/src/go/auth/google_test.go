@@ -236,7 +236,15 @@ func TestNewGoogleAuthenticator_HappyPath_FirstKey(t *testing.T) {
 
 	jwt := fmt.Sprintf("%s.%s", unsigned, base64.RawURLEncoding.EncodeToString(sigBytes))
 
-	testInstance := NewGoogleAuthenticator(clientId, certFetcher)
+	expectedRoles := []Role{
+		Role("whatever"),
+	}
+	getRoles := RoleOracle(func(ctx context.Context, emailAddress string) []Role {
+		asserter.Equal(email, emailAddress)
+		return expectedRoles
+	})
+
+	testInstance := NewGoogleAuthenticator(clientId, certFetcher, getRoles)
 	res, err := testInstance(context.Background(), jwt)
 
 	asserter.NoError(err)
@@ -244,9 +252,7 @@ func TestNewGoogleAuthenticator_HappyPath_FirstKey(t *testing.T) {
 		UserID: subject,
 		Email:  email,
 		Name:   name,
-		Roles: []string{
-			"article_read",
-		},
+		Roles:  expectedRoles,
 	}, res)
 }
 
@@ -309,7 +315,15 @@ func TestNewGoogleAuthenticator_HappyPath_NotFirstKey(t *testing.T) {
 	}
 	jwt := fmt.Sprintf("%s.%s", unsigned, base64.RawURLEncoding.EncodeToString(sigBytes))
 
-	testInstance := NewGoogleAuthenticator(clientId, certFetcher)
+	expectedRoles := []Role{
+		Role("whatever"),
+	}
+	getRoles := RoleOracle(func(ctx context.Context, emailAddress string) []Role {
+		asserter.Equal(email, emailAddress)
+		return expectedRoles
+	})
+
+	testInstance := NewGoogleAuthenticator(clientId, certFetcher, getRoles)
 	res, err := testInstance(context.Background(), jwt)
 
 	asserter.NoError(err)
@@ -317,9 +331,7 @@ func TestNewGoogleAuthenticator_HappyPath_NotFirstKey(t *testing.T) {
 		UserID: subject,
 		Email:  email,
 		Name:   name,
-		Roles: []string{
-			"article_read",
-		},
+		Roles:  expectedRoles,
 	}, res)
 }
 
@@ -387,7 +399,15 @@ func TestNewGoogleAuthenticator_HappyPath_Caching(t *testing.T) {
 
 	jwt := fmt.Sprintf("%s.%s", unsigned, base64.RawURLEncoding.EncodeToString(sigBytes))
 
-	testInstance := NewGoogleAuthenticator(clientId, certFetcher)
+	expectedRoles := []Role{
+		Role("whatever"),
+	}
+	getRoles := RoleOracle(func(ctx context.Context, emailAddress string) []Role {
+		asserter.Equal(email, emailAddress)
+		return expectedRoles
+	})
+
+	testInstance := NewGoogleAuthenticator(clientId, certFetcher, getRoles)
 
 	res, err := testInstance(context.Background(), jwt)
 	asserter.NoError(err)
@@ -395,9 +415,7 @@ func TestNewGoogleAuthenticator_HappyPath_Caching(t *testing.T) {
 		UserID: subject,
 		Email:  email,
 		Name:   name,
-		Roles: []string{
-			"article_read",
-		},
+		Roles:  expectedRoles,
 	}, res)
 
 	asserter.Equal(1, fetchCount)
@@ -408,9 +426,7 @@ func TestNewGoogleAuthenticator_HappyPath_Caching(t *testing.T) {
 		UserID: subject,
 		Email:  email,
 		Name:   name,
-		Roles: []string{
-			"article_read",
-		},
+		Roles:  expectedRoles,
 	}, res)
 	asserter.Equal(1, fetchCount)
 
@@ -421,9 +437,7 @@ func TestNewGoogleAuthenticator_HappyPath_Caching(t *testing.T) {
 		UserID: subject,
 		Email:  email,
 		Name:   name,
-		Roles: []string{
-			"article_read",
-		},
+		Roles:  expectedRoles,
 	}, res)
 	asserter.Equal(2, fetchCount)
 }
@@ -492,7 +506,15 @@ func TestNewGoogleAuthenticator_FailureToFetchCertOnFirstTry(t *testing.T) {
 	}
 	jwt := fmt.Sprintf("%s.%s", unsigned, base64.RawURLEncoding.EncodeToString(sigBytes))
 
-	testInstance := NewGoogleAuthenticator(clientId, certFetcher)
+	expectedRoles := []Role{
+		Role("whatever"),
+	}
+	getRoles := RoleOracle(func(ctx context.Context, emailAddress string) []Role {
+		asserter.Equal(email, emailAddress)
+		return expectedRoles
+	})
+
+	testInstance := NewGoogleAuthenticator(clientId, certFetcher, getRoles)
 	_, err = testInstance(context.Background(), jwt)
 	asserter.Error(err)
 
@@ -502,9 +524,7 @@ func TestNewGoogleAuthenticator_FailureToFetchCertOnFirstTry(t *testing.T) {
 		UserID: subject,
 		Email:  email,
 		Name:   name,
-		Roles: []string{
-			"article_read",
-		},
+		Roles:  expectedRoles,
 	}, res)
 }
 
@@ -566,7 +586,15 @@ func TestNewGoogleAuthenticator_InvalidSigner(t *testing.T) {
 	}
 	jwt := fmt.Sprintf("%s.%s", unsigned, base64.RawURLEncoding.EncodeToString(sigBytes))
 
-	testInstance := NewGoogleAuthenticator(clientId, certFetcher)
+	expectedRoles := []Role {
+		Role("whatever"),
+	}
+	getRoles := RoleOracle(func(ctx context.Context, emailAddress string) []Role {
+		asserter.Equal(email, emailAddress)
+		return expectedRoles
+	})
+
+	testInstance := NewGoogleAuthenticator(clientId, certFetcher, getRoles)
 	_, err = testInstance(context.Background(), jwt)
 
 	asserter.EqualError(err, fmt.Sprintf("invalid signature on token %s", jwt))
@@ -626,7 +654,15 @@ func TestNewGoogleAuthenticator_NotJson(t *testing.T) {
 	}
 	jwt := fmt.Sprintf("%s.%s", unsigned, base64.RawURLEncoding.EncodeToString(sigBytes))
 
-	testInstance := NewGoogleAuthenticator(clientId, certFetcher)
+	expectedRoles := []Role {
+		Role("whatever"),
+	}
+	getRoles := RoleOracle(func(ctx context.Context, emailAddress string) []Role {
+		asserter.Equal(email, emailAddress)
+		return expectedRoles
+	})
+
+	testInstance := NewGoogleAuthenticator(clientId, certFetcher, getRoles)
 	_, err = testInstance(context.Background(), jwt)
 
 	asserter.EqualError(err, fmt.Sprintf("garbage token: payload not json (%s)", jwt))
@@ -686,7 +722,15 @@ func TestNewGoogleAuthenticator_InvalidAudience(t *testing.T) {
 	}
 	jwt := fmt.Sprintf("%s.%s", unsigned, base64.RawURLEncoding.EncodeToString(sigBytes))
 
-	testInstance := NewGoogleAuthenticator(clientId, certFetcher)
+	expectedRoles := []Role {
+		Role("whatever"),
+	}
+	getRoles := RoleOracle(func(ctx context.Context, emailAddress string) []Role {
+		asserter.Equal(email, emailAddress)
+		return expectedRoles
+	})
+
+	testInstance := NewGoogleAuthenticator(clientId, certFetcher, getRoles)
 	_, err = testInstance(context.Background(), jwt)
 
 	asserter.EqualError(err, fmt.Sprintf("invalid audience: %s-whoops", clientId))
@@ -746,7 +790,15 @@ func TestNewGoogleAuthenticator_Expired(t *testing.T) {
 	}
 	jwt := fmt.Sprintf("%s.%s", unsigned, base64.RawURLEncoding.EncodeToString(sigBytes))
 
-	testInstance := NewGoogleAuthenticator(clientId, certFetcher)
+	expectedRoles := []Role {
+		Role("whatever"),
+	}
+	getRoles := RoleOracle(func(ctx context.Context, emailAddress string) []Role {
+		asserter.Equal(email, emailAddress)
+		return expectedRoles
+	})
+
+	testInstance := NewGoogleAuthenticator(clientId, certFetcher, getRoles)
 	_, err = testInstance(context.Background(), jwt)
 
 	asserter.EqualError(err, fmt.Sprintf("expired token, expiration: %s", expires.Format(time.RFC3339)))
@@ -776,7 +828,12 @@ func TestNewGoogleAuthenticator_Garbage(t *testing.T) {
 		}, nil
 	}
 
-	testInstance := NewGoogleAuthenticator(clientId, certFetcher)
+	getRoles := RoleOracle(func(ctx context.Context, emailAddress string) []Role {
+		asserter.Fail("should not be here")
+		return make([]Role, 0)
+	})
+
+	testInstance := NewGoogleAuthenticator(clientId, certFetcher, getRoles)
 	_, err = testInstance(context.Background(), "wtfisthis?")
 	asserter.EqualError(err, "garbage token: format (wtfisthis?)")
 

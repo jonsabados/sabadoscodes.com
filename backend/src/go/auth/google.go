@@ -10,14 +10,16 @@ import (
 	"encoding/json"
 	"encoding/pem"
 	"fmt"
-	"github.com/jonsabados/sabadoscodes.com/httputil"
-	"github.com/pkg/errors"
-	"github.com/rs/zerolog"
 	"io/ioutil"
 	"net/http"
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/pkg/errors"
+	"github.com/rs/zerolog"
+
+	"github.com/jonsabados/sabadoscodes.com/httputil"
 )
 
 const GoogleCertEndpoint = "https://www.googleapis.com/oauth2/v1/certs"
@@ -27,6 +29,7 @@ type googleAuthenticator struct {
 	certs      GooglePublicCerts
 	fetchCerts GoogleCertFetcher
 	clientID   string
+	getRoles   RoleOracle
 }
 
 func (a *googleAuthenticator) currentCerts(ctx context.Context) GooglePublicCerts {
@@ -104,9 +107,7 @@ func (a *googleAuthenticator) authenticate(ctx context.Context, token string) (P
 		UserID: payload.Sub,
 		Email:  payload.Email,
 		Name:   payload.Name,
-		Roles:  []string {
-			"article_read",
-		},
+		Roles:  a.getRoles(ctx, payload.Email),
 	}, nil
 }
 
@@ -117,10 +118,11 @@ func sanitizeTokenForLog(token string) string {
 	return token
 }
 
-func NewGoogleAuthenticator(clientID string, fetchCerts GoogleCertFetcher) Authenticator {
+func NewGoogleAuthenticator(clientID string, fetchCerts GoogleCertFetcher, roleOracle RoleOracle) Authenticator {
 	authenticator := &googleAuthenticator{
 		clientID:   clientID,
 		fetchCerts: fetchCerts,
+		getRoles:   roleOracle,
 	}
 
 	return authenticator.authenticate

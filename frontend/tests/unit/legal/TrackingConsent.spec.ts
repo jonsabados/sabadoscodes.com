@@ -6,7 +6,7 @@ import BootstrapVue from 'bootstrap-vue'
 import startAnalytics from '@/legal/analytics'
 
 jest.mock('js-cookie')
-jest.mock('@/legal/startAnalytics')
+jest.mock('@/legal/analytics')
 
 const getMock = get as unknown as jest.Mock
 const setMock = set as unknown as jest.Mock
