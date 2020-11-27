@@ -10,8 +10,12 @@ import (
 	"net/http"
 )
 
+type ListResponse struct {
+	Results []interface{} `json:"results"`
+}
+
 type ErrorResponse struct {
-	Message string `json:"message"`
+	Message   string `json:"message"`
 	RequestID string `json:"requestId"`
 }
 

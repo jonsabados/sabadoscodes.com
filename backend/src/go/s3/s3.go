@@ -13,6 +13,11 @@ import (
 	"time"
 )
 
+type Object struct {
+	Path string
+	Size int64
+}
+
 type ObjectFetcher func(ctx context.Context, bucket, object string) (io.ReadCloser, error)
 
 func NewObjectFetcher(client *s3.S3) ObjectFetcher {
@@ -39,6 +44,28 @@ func NewObjectRemover(client *s3.S3) ObjectRemover {
 			Key:    aws.String(object),
 		})
 		return err
+	}
+}
+
+type ObjectLister func(ctx context.Context, bucket string, filter string) ([]Object, error)
+
+func NewObjectLister(client *s3.S3) ObjectLister {
+	return func(ctx context.Context, bucket string, prefix string) ([]Object, error) {
+		res, err := client.ListObjectsWithContext(ctx, &s3.ListObjectsInput{
+			Bucket: aws.String(bucket),
+			Prefix: aws.String(prefix),
+		})
+		if err != nil {
+			return nil, errors.WithStack(err)
+		}
+		ret := make([]Object, 0)
+		for _, o := range res.Contents {
+			ret = append(ret, Object{
+				Path: *o.Key,
+				Size: *o.Size,
+			})
+		}
+		return ret, nil
 	}
 }
 

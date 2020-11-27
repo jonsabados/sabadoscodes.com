@@ -18,6 +18,7 @@ import (
 	"github.com/aws/aws-xray-sdk-go/xray"
 	"github.com/rs/zerolog"
 
+	"github.com/jonsabados/sabadoscodes.com/article/assets"
 	"github.com/jonsabados/sabadoscodes.com/auth"
 	"github.com/jonsabados/sabadoscodes.com/cors"
 	"github.com/jonsabados/sabadoscodes.com/httputil"
@@ -34,7 +35,13 @@ type inboundRequest struct {
 	Content  string `json:"content"`
 }
 
-func newHandler(prepLogs logging.Preparer, corsHeaders cors.ResponseHeaderBuilder, extractPrincipal auth.PrincipalExtractor, targetBucket string, saveObject s3.ObjectSaver, baseAssetURL string) func(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+func newHandler(prepLogs logging.Preparer,
+	corsHeaders cors.ResponseHeaderBuilder,
+	extractPrincipal auth.PrincipalExtractor,
+	targetBucket string,
+	saveObject s3.ObjectSaver,
+	baseAssetURL string) func(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+
 	return func(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 		ctx, _ = prepLogs(ctx)
 		responseHeaders := corsHeaders(request.Headers)
@@ -79,7 +86,7 @@ func newHandler(prepLogs logging.Preparer, corsHeaders cors.ResponseHeaderBuilde
 
 		zerolog.Ctx(ctx).Info().Interface("user", principal).Msg("user uploading object")
 		// needs to be under article-asset in the bucket. If it ever needs to become configurable will deal with it
-		path := fmt.Sprintf("article-assets/%s", uploadRequest.Path)
+		path := fmt.Sprintf("%s%s", assets.AssetKeyPrefix, uploadRequest.Path)
 		err = saveObject(ctx, targetBucket, path, bytes.NewReader(content), uploadRequest.MimeType, assetCacheDuration)
 		if err != nil {
 			zerolog.Ctx(ctx).Error().Err(err).Msg("upload failed")
