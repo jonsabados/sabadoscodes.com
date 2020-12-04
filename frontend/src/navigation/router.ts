@@ -10,6 +10,7 @@ import Admin from '@/admin/Admin.vue'
 import AdminHome from '@/admin/AdminHome.vue'
 import AdminArticles from '@/admin/articles/Articles.vue'
 import AdminAssets from '@/admin/articles/Assets.vue'
+import AdminAssetsList from '@/admin/articles/AssetsList.vue'
 import AdminAssetUpload from '@/admin/articles/AssetUpload.vue'
 
 export const HOME_ROUTE_NAME = 'home'
@@ -76,9 +77,13 @@ const routes = [
       },
       {
         path: 'assets',
-        name: ADMIN_ARTICLES_ASSETS_NAME,
         component: AdminAssets,
         children: [
+          {
+            path: '/',
+            name: ADMIN_ARTICLES_ASSETS_NAME,
+            component: AdminAssetsList
+          },
           {
             path: 'upload',
             name: ADMIN_ARTICLES_ASSET_UPLOAD_NAME,

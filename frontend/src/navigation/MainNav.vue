@@ -48,7 +48,7 @@ export default class MainNav extends Vue {
   }
 
   get hasArticleAssetRole(): boolean {
-    return this.$store.state.user.self && this.$store.state.user.self.roles && this.$store.state.user.self.roles.includes('article_asset_publish')
+    return this.$store.state.user && this.$store.state.user.self && this.$store.state.user.self.roles && this.$store.state.user.self.roles.includes('article_asset_publish')
   }
 
   mounted() {

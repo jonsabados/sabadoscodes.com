@@ -1,8 +1,7 @@
 <template>
-  <div>
+  <div class="container-fluid">
     <h2>Assets</h2>
     <router-view />
-    <router-link :to="{name: 'adminAssetUpload'}">Upload</router-link>
   </div>
 </template>
 

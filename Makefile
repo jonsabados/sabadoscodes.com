@@ -59,4 +59,4 @@ clean:
 run: frontend/.env.local
 	cd frontend && npm run serve
 
-build: frontend/dist/index.html dist/forwarderLambda.zip dist/corsLambda.zip dist/authorizerLambda.zip dist/selfLambda.zip dist/articleAssetUploadLambda.zip dist/articleAssetUploadLambda.zip
+build: frontend/dist/index.html dist/forwarderLambda.zip dist/corsLambda.zip dist/authorizerLambda.zip dist/selfLambda.zip dist/articleAssetUploadLambda.zip dist/articleAssetList.zip

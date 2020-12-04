@@ -44,6 +44,13 @@ func NewPolicyBuilder(region string, accountID string, apiID string, stage strin
 						fmt.Sprintf("arn:aws:execute-api:%s:%s:%s/%s/%s/%s", region, accountID, apiID, stage, "POST", "article/asset"),
 					},
 				})
+				statement = append(statement, events.IAMPolicyStatement{
+					Action: []string{"execute-api:Invoke"},
+					Effect: "Allow",
+					Resource: []string{
+						fmt.Sprintf("arn:aws:execute-api:%s:%s:%s/%s/%s/%s", region, accountID, apiID, stage, "GET", "article/asset"),
+					},
+				})
 			}
 		}
 		return events.APIGatewayCustomAuthorizerPolicy{

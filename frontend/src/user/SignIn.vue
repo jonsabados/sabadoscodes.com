@@ -9,12 +9,10 @@
 // @ts-ignore
 import GoogleLogin from 'vue-google-login'
 import { Component, Vue } from 'vue-property-decorator'
-import Loading from '@/app/Loading.vue'
 
 @Component({
   components: {
-    GoogleLogin,
-    Loading
+    GoogleLogin
   }
 })
 export default class SignIn extends Vue {
