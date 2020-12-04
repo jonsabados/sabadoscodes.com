@@ -54,6 +54,9 @@ export default class AssetUpload extends Vue {
     this.uploading = false
     this.asset = null
     this.assetPath = ''
+    this.uploadSize = 1
+    this.uploadProgress = 0
+    this.newAssetUrl = null
   }
 
   uploadFinished(assetURL: string) {
@@ -65,22 +68,7 @@ export default class AssetUpload extends Vue {
       throw Error('asset not set on upload')
     }
     this.uploading = true
-    const authToken = this.$store.state.user.authToken
-    const assetType = this.asset.type
-    const assetPath = this.assetPath
-    const reader = new FileReader()
-    const handleProgress = this.handleUploadProgress
-    const uploadFinished = this.uploadFinished
-    reader.onload = async function() {
-      const content = btoa(String.fromCharCode(...new Uint8Array(this.result as ArrayBuffer)))
-      const location = await uploadAsset(authToken, {
-        content: content,
-        mimeType: assetType,
-        path: assetPath
-      }, handleProgress)
-      uploadFinished(location)
-    }
-    reader.readAsArrayBuffer(this.asset)
+    uploadAsset(this.$store.state.user.authToken, this.asset, this.assetPath, this.uploadFinished, this.handleUploadProgress)
   }
 }
 </script>
