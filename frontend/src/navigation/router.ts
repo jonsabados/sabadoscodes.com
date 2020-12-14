@@ -64,6 +64,9 @@ const routes = [
   {
     path: '/admin',
     component: Admin,
+    meta: {
+      breadCrumb: 'Admin'
+    },
     children: [
       {
         path: '/',
@@ -73,11 +76,17 @@ const routes = [
       {
         path: 'articles',
         name: ADMIN_ARTICLES_ROUTE_NAME,
-        component: AdminArticles
+        component: AdminArticles,
+        meta: {
+          breadCrumb: 'Articles'
+        }
       },
       {
         path: 'assets',
         component: AdminAssets,
+        meta: {
+          breadCrumb: 'Assets'
+        },
         children: [
           {
             path: '/',
@@ -87,7 +96,10 @@ const routes = [
           {
             path: 'upload',
             name: ADMIN_ARTICLES_ASSET_UPLOAD_NAME,
-            component: AdminAssetUpload
+            component: AdminAssetUpload,
+            meta: {
+              breadCrumb: 'Upload'
+            }
           }
         ]
       }
