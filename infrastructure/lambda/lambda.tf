@@ -31,6 +31,7 @@ resource "aws_lambda_function" "lambda" {
   function_name    = "${var.workspace_prefix}${var.lambda_name}"
   role             = aws_iam_role.lambda_role.arn
   runtime          = "go1.x"
+  timeout          = var.timeout
 
   tracing_config {
     mode = "Active"

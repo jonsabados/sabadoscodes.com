@@ -13,3 +13,8 @@ variable "workspace_prefix" {
 variable "env_variables" {
   type = map
 }
+
+variable "timeout" {
+  type    = string
+  default = 3
+}

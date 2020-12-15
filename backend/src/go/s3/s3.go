@@ -69,9 +69,25 @@ func NewObjectLister(client *s3.S3) ObjectLister {
 	}
 }
 
-type ObjectSaver func(ctx context.Context, bucket string, objectKey string, object io.ReadSeeker, mimeType string, cacheDuration time.Duration) error
+type ObjectSaver func(ctx context.Context, bucket string, objectKey string, object io.ReadSeeker, mimeType string) error
 
 func NewObjectSaver(client *s3.S3) ObjectSaver {
+	return func(ctx context.Context, bucket string, objectKey string, object io.ReadSeeker, mimeType string) error {
+		zerolog.Ctx(ctx).Info().Str("bucket", bucket).Str("key", objectKey).Msg("saving object")
+		_, err := client.PutObjectWithContext(ctx, &s3.PutObjectInput{
+			Bucket:       aws.String(bucket),
+			Key:          aws.String(objectKey),
+			Body:         object,
+			ContentType:  aws.String(mimeType),
+			ACL:          aws.String("private"),
+		})
+		return err
+	}
+}
+
+type PublicObjectSaver func(ctx context.Context, bucket string, objectKey string, object io.ReadSeeker, mimeType string, cacheDuration time.Duration) error
+
+func NewPublicObjectSaver(client *s3.S3) PublicObjectSaver {
 	return func(ctx context.Context, bucket string, objectKey string, object io.ReadSeeker, mimeType string, cacheDuration time.Duration) error {
 		zerolog.Ctx(ctx).Info().Str("bucket", bucket).Str("key", objectKey).Msg("saving object")
 		_, err := client.PutObjectWithContext(ctx, &s3.PutObjectInput{

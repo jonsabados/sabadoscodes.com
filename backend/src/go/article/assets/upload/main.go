@@ -39,7 +39,7 @@ func newHandler(prepLogs logging.Preparer,
 	corsHeaders cors.ResponseHeaderBuilder,
 	extractPrincipal auth.PrincipalExtractor,
 	targetBucket string,
-	saveObject s3.ObjectSaver,
+	saveObject s3.PublicObjectSaver,
 	baseAssetURL string) func(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 
 	return func(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
@@ -119,7 +119,7 @@ func main() {
 	baseAssetURL := os.Getenv("BASE_ASSET_URL")
 
 	s3Client := s3.RawClient(sess)
-	saver := s3.NewObjectSaver(s3Client)
+	saver := s3.NewPublicObjectSaver(s3Client)
 
 	handler := newHandler(logging.NewPreparer(), cors.NewResponseHeaderBuilder(allowedDomains), auth.NewPrincipalExtractor(), targetBucket, saver, baseAssetURL)
 
