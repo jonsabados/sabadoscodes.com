@@ -9,6 +9,7 @@ import Privacy from '@/legal/Privacy.vue'
 import Admin from '@/admin/Admin.vue'
 import AdminHome from '@/admin/AdminHome.vue'
 import AdminArticles from '@/admin/articles/Articles.vue'
+import AdminArticleEdit from '@/admin/articles/Edit.vue'
 import AdminAssets from '@/admin/articles/Assets.vue'
 import AdminAssetsList from '@/admin/articles/AssetsList.vue'
 import AdminAssetUpload from '@/admin/articles/AssetUpload.vue'
@@ -21,6 +22,7 @@ export const ARTICLE_ROUTE_NAME = 'article'
 export const PRIVACY_ROUTE_NAME = 'privacy'
 export const ADMIN_ROUTE_NAME = 'admin'
 export const ADMIN_ARTICLES_ROUTE_NAME = 'adminArticles'
+export const ADMIN_NEW_ARTICLE_ROUTE_NAME = 'adminNewArticle'
 export const ADMIN_ARTICLES_ASSETS_NAME = 'adminAssets'
 export const ADMIN_ARTICLES_ASSET_UPLOAD_NAME = 'adminAssetUpload'
 
@@ -75,11 +77,20 @@ const routes = [
       },
       {
         path: 'articles',
-        name: ADMIN_ARTICLES_ROUTE_NAME,
         component: AdminArticles,
         meta: {
           breadCrumb: 'Articles'
-        }
+        },
+        children: [
+          {
+            path: 'new',
+            name: ADMIN_NEW_ARTICLE_ROUTE_NAME,
+            component: AdminArticleEdit,
+            meta: {
+              breadCrumb: 'New'
+            }
+          }
+        ]
       },
       {
         path: 'assets',

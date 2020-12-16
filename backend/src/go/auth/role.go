@@ -9,6 +9,7 @@ type Role string
 
 const (
 	RoleAssetPublish = "article_asset_publish"
+	RoleArticlePublish = "article_publish"
 )
 
 type RoleOracle func(ctx context.Context, emailAddress string) []Role
@@ -18,6 +19,7 @@ func NewRoleOracle(rootUser string) RoleOracle {
 		ret := make([]Role, 0)
 		if strings.ToLower(emailAddress) == strings.ToLower(rootUser) {
 			ret = append(ret, RoleAssetPublish)
+			ret = append(ret, RoleArticlePublish)
 		}
 		return ret
 	}

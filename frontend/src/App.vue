@@ -68,6 +68,10 @@ body {
   line-height: 30px;
 }
 
+.align-right {
+  text-align: right;
+}
+
 #footerNav {
   height: 60px;
   padding: 0;

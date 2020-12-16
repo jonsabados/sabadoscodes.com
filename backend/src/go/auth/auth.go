@@ -26,37 +26,29 @@ type PolicyBuilder func(ctx context.Context, principal Principal) (events.APIGat
 func NewPolicyBuilder(region string, accountID string, apiID string, stage string) PolicyBuilder {
 	return func(ctx context.Context, principal Principal) (events.APIGatewayCustomAuthorizerPolicy, error) {
 		statement := []events.IAMPolicyStatement{
-			{
-				Action: []string{"execute-api:Invoke"},
-				Effect: "Allow",
-				Resource: []string{
-					fmt.Sprintf("arn:aws:execute-api:%s:%s:%s/%s/%s/%s", region, accountID, apiID, stage, "GET", "self"),
-				},
-			},
+			createAllowStatement(fmt.Sprintf("arn:aws:execute-api:%s:%s:%s/%s/%s/%s", region, accountID, apiID, stage, "GET", "self")),
 		}
 		for _, r := range principal.Roles {
 			switch r {
 			case RoleAssetPublish:
-				statement = append(statement, events.IAMPolicyStatement{
-					Action: []string{"execute-api:Invoke"},
-					Effect: "Allow",
-					Resource: []string{
-						fmt.Sprintf("arn:aws:execute-api:%s:%s:%s/%s/%s/%s", region, accountID, apiID, stage, "POST", "article/asset"),
-					},
-				})
-				statement = append(statement, events.IAMPolicyStatement{
-					Action: []string{"execute-api:Invoke"},
-					Effect: "Allow",
-					Resource: []string{
-						fmt.Sprintf("arn:aws:execute-api:%s:%s:%s/%s/%s/%s", region, accountID, apiID, stage, "GET", "article/asset"),
-					},
-				})
+				statement = append(statement, createAllowStatement(fmt.Sprintf("arn:aws:execute-api:%s:%s:%s/%s/%s/%s", region, accountID, apiID, stage, "POST", "article/asset")))
+				statement = append(statement, createAllowStatement(fmt.Sprintf("arn:aws:execute-api:%s:%s:%s/%s/%s/%s", region, accountID, apiID, stage, "GET", "article/asset")))
+			case RoleArticlePublish:
+				statement = append(statement, createAllowStatement(fmt.Sprintf("arn:aws:execute-api:%s:%s:%s/%s/%s/%s", region, accountID, apiID, stage, "PUT", "article/slug/{slug}")))
 			}
 		}
 		return events.APIGatewayCustomAuthorizerPolicy{
 			Version:   "2012-10-17",
 			Statement: statement,
 		}, nil
+	}
+}
+
+func createAllowStatement(arn string) events.IAMPolicyStatement {
+	return events.IAMPolicyStatement{
+		Action:   []string{"execute-api:Invoke"},
+		Effect:   "Allow",
+		Resource: []string{arn},
 	}
 }
 

@@ -11,6 +11,7 @@
         <router-link :to="{name: 'about'}" class="nav-link">About</router-link>
       </li>
       <b-nav-item-dropdown v-if="isAdmin" text="Admin" right>
+        <b-dropdown-item v-if="hasArticleAssetRole" :to="{name: 'adminNewArticle'}">New Article</b-dropdown-item>
         <b-dropdown-item v-if="hasArticleAssetRole" :to="{name: 'adminAssets'}">Article Assets</b-dropdown-item>
       </b-nav-item-dropdown>
     </ul>
@@ -48,7 +49,15 @@ export default class MainNav extends Vue {
   }
 
   get hasArticleAssetRole(): boolean {
-    return this.$store.state.user && this.$store.state.user.self && this.$store.state.user.self.roles && this.$store.state.user.self.roles.includes('article_asset_publish')
+    return this.hasRole('article_asset_publish')
+  }
+
+  get hasArticleEditRole(): boolean {
+    return this.hasRole('article_publish')
+  }
+
+  hasRole(roleName: string): boolean {
+    return this.$store.state.user && this.$store.state.user.self && this.$store.state.user.self.roles && this.$store.state.user.self.roles.includes(roleName)
   }
 
   mounted() {

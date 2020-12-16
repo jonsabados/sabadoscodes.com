@@ -7,7 +7,7 @@
         </li>
       </ol>
     </nav>
-    <main class="col-md-9 order-0 order-md-1" role="main">
+    <main role="main">
       <loading v-if="!isReady" />
       <router-view v-else />
     </main>
