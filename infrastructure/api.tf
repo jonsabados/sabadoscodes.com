@@ -33,7 +33,13 @@ resource "aws_api_gateway_domain_name" "api" {
 }
 
 resource "aws_api_gateway_deployment" "main" {
-  depends_on  = [aws_api_gateway_integration.cors_integration, aws_api_gateway_integration.self_integration, aws_api_gateway_integration.article_asset_list, aws_api_gateway_integration.article_asset_upload]
+  depends_on  = [
+    aws_api_gateway_integration.cors_integration,
+    aws_api_gateway_integration.self_integration,
+    aws_api_gateway_integration.article_asset_list,
+    aws_api_gateway_integration.article_asset_upload,
+    aws_api_gateway_integration.article_save
+  ]
   rest_api_id = aws_api_gateway_rest_api.api.id
   stage_name  = "${local.workspace_prefix}main"
 

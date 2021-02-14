@@ -34,7 +34,7 @@ func NewPolicyBuilder(region string, accountID string, apiID string, stage strin
 				statement = append(statement, createAllowStatement(fmt.Sprintf("arn:aws:execute-api:%s:%s:%s/%s/%s/%s", region, accountID, apiID, stage, "POST", "article/asset")))
 				statement = append(statement, createAllowStatement(fmt.Sprintf("arn:aws:execute-api:%s:%s:%s/%s/%s/%s", region, accountID, apiID, stage, "GET", "article/asset")))
 			case RoleArticlePublish:
-				statement = append(statement, createAllowStatement(fmt.Sprintf("arn:aws:execute-api:%s:%s:%s/%s/%s/%s", region, accountID, apiID, stage, "PUT", "article/slug/{slug}")))
+				statement = append(statement, createAllowStatement(fmt.Sprintf("arn:aws:execute-api:%s:%s:%s/%s/%s/%s", region, accountID, apiID, stage, "PUT", "article/slug/*")))
 			}
 		}
 		return events.APIGatewayCustomAuthorizerPolicy{

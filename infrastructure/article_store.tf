@@ -3,7 +3,7 @@ resource "aws_dynamodb_table" "article_store" {
   billing_mode = "PAY_PER_REQUEST"
 
   hash_key  = "Slug"
-  range_key = "PublishDate"
+  range_key = "SortKey"
 
   attribute {
     name = "Slug"
@@ -11,8 +11,22 @@ resource "aws_dynamodb_table" "article_store" {
   }
 
   attribute {
+    name = "SortKey"
+    type = "S"
+  }
+
+  attribute {
     name = "PublishDate"
     type = "N"
+  }
+
+  global_secondary_index {
+    name = "PublishDateIndex"
+
+    hash_key           = "PublishDate"
+    range_key          = "Slug"
+    projection_type    = "INCLUDE"
+    non_key_attributes = ["Title"]
   }
 
   tags = {
