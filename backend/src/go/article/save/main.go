@@ -25,8 +25,6 @@ import (
 	"github.com/jonsabados/sabadoscodes.com/response"
 )
 
-const assetCacheDuration = time.Hour * 24 * 365
-
 type inboundRequest struct {
 	Slug        string     `json:"slug"`
 	PublishDate *time.Time `json:"publishDate"`
