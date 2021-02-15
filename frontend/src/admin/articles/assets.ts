@@ -17,12 +17,6 @@ export async function listAssets(authToken: string): Promise<Array<AssetListDto>
   return res.data.results
 }
 
-export interface AssetCreationDto {
-  path: string,
-  mimeType: string,
-  content: string
-}
-
 export type progressHandler = (progressEvent: ProgressEvent) => void
 
 export type uploadCompleteCallback = (location: string) => void

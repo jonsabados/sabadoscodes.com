@@ -37,7 +37,7 @@
       an <a href="https://aws.amazon.com/api-gateway/" target="_blank">API Gateway</a> or an
       <a href="https://docs.aws.amazon.com/elasticloadbalancing/latest/application/introduction.html">ALB</a>.
     </p>
-    <p>The front is a no brainer - well just stuff html and assets in a
+    <p>The front end is a no brainer, we will just stuff html and assets in a
       <a href="https://aws.amazon.com/s3/" target="_blank">S3 bucket</a> and stick
       <a href="https://aws.amazon.com/cloudfront/" target="_blank">CloudFront</a> in front of it.
     </p>

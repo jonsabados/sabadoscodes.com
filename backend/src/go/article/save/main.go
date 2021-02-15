@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"net/url"
 	"os"
 	"strings"
 	"time"
@@ -24,8 +25,6 @@ import (
 	"github.com/jonsabados/sabadoscodes.com/logging"
 	"github.com/jonsabados/sabadoscodes.com/response"
 )
-
-const assetCacheDuration = time.Hour * 24 * 365
 
 type inboundRequest struct {
 	Slug        string     `json:"slug"`
@@ -72,7 +71,11 @@ func newHandler(prepLogs logging.Preparer,
 			return errors.ToAPIResponse(ctx, responseHeaders), nil
 		}
 
-		slug := request.PathParameters["slug"]
+		slug, err := url.PathUnescape(request.PathParameters["slug"])
+		if err != nil {
+			return response.HandleError(ctx, err), nil
+		}
+
 		existing, err := fetchArticle(ctx, slug)
 		if err != nil {
 			return response.HandleError(ctx, err), nil
