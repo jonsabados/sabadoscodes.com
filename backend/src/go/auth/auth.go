@@ -16,6 +16,15 @@ type Principal struct {
 	Roles  []Role `json:"roles"`
 }
 
+func (p Principal) HasRole(role Role) bool {
+	for _, r := range p.Roles {
+		if r == role {
+			return true
+		}
+	}
+	return false
+}
+
 var Anonymous = Principal{
 	UserID: "anonymous",
 	Name:   "Anonymous User",
@@ -27,6 +36,7 @@ func NewPolicyBuilder(region string, accountID string, apiID string, stage strin
 	return func(ctx context.Context, principal Principal) (events.APIGatewayCustomAuthorizerPolicy, error) {
 		statement := []events.IAMPolicyStatement{
 			createAllowStatement(fmt.Sprintf("arn:aws:execute-api:%s:%s:%s/%s/%s/%s", region, accountID, apiID, stage, "GET", "self")),
+			createAllowStatement(fmt.Sprintf("arn:aws:execute-api:%s:%s:%s/%s/%s/%s", region, accountID, apiID, stage, "GET", "article/slug/*")),
 		}
 		for _, r := range principal.Roles {
 			switch r {

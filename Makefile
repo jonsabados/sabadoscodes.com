@@ -45,6 +45,12 @@ dist/articleSave: dist/ $(shell find backend/src/go)
 dist/articleSaveLambda.zip: dist/articleSave
 	cd dist && zip articleSaveLambda.zip articleSave
 
+dist/articleGet: dist/ $(shell find backend/src/go)
+	cd backend/src/go && GOOS=linux go build -o ../../../dist/articleGet github.com/jonsabados/sabadoscodes.com/article/get
+
+dist/articleGetLambda.zip: dist/articleGet
+	cd dist && zip articleGetLambda.zip articleGet
+
 dist/backup: dist/ $(shell find backend/src/go)
 	cd backend/src/go && GOOS=linux go build -o ../../../dist/backup github.com/jonsabados/sabadoscodes.com/backup/lambda
 
@@ -72,4 +78,4 @@ run: frontend/.env.local
 	cd frontend && npm run serve
 
 build: frontend/dist/index.html dist/forwarderLambda.zip dist/corsLambda.zip dist/authorizerLambda.zip dist/selfLambda.zip \
-	dist/articleAssetUploadLambda.zip dist/articleAssetList.zip dist/backupLambda.zip dist/articleSaveLambda.zip
+	dist/articleAssetUploadLambda.zip dist/articleAssetList.zip dist/backupLambda.zip dist/articleSaveLambda.zip dist/articleGetLambda.zip

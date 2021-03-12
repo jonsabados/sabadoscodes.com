@@ -19,7 +19,7 @@ type ErrorResponse struct {
 	RequestID string `json:"requestId"`
 }
 
-func HandleError(ctx context.Context, err error) events.APIGatewayProxyResponse {
+func HandleError(ctx context.Context, responseHeaders map[string]string, err error) events.APIGatewayProxyResponse {
 	zerolog.Ctx(ctx).Error().Str("error", fmt.Sprintf("%+v", err)).Msg("error encountered")
 
 	responseBody := ErrorResponse{
@@ -35,9 +35,34 @@ func HandleError(ctx context.Context, err error) events.APIGatewayProxyResponse 
 		panic(err)
 	}
 
+	responseHeaders["content-type"] = "application/json"
+
 	return events.APIGatewayProxyResponse{
-		StatusCode:      http.StatusInternalServerError,
-		Body:            string(content),
-		IsBase64Encoded: false,
+		StatusCode: http.StatusInternalServerError,
+		Body:       string(content),
+		Headers:    responseHeaders,
+	}
+}
+
+func HandleNtFound(ctx context.Context, responseHeaders map[string]string) events.APIGatewayProxyResponse {
+	responseBody := ErrorResponse{
+		Message: "requested entity not found",
+	}
+
+	if awsCtx, inLambda := lambdacontext.FromContext(ctx); inLambda {
+		responseBody.RequestID = awsCtx.AwsRequestID
+	}
+
+	content, err := json.Marshal(responseBody)
+	if err != nil {
+		panic(err)
+	}
+
+	responseHeaders["content-type"] = "application/json"
+
+	return events.APIGatewayProxyResponse{
+		StatusCode: http.StatusNotFound,
+		Body:       string(content),
+		Headers:    responseHeaders,
 	}
 }

@@ -43,11 +43,10 @@ func newHandler(prepLogs logging.Preparer,
 	return func(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 		ctx, _ = prepLogs(ctx)
 		responseHeaders := corsHeaders(request.Headers)
-		responseHeaders["content-type"] = "application/json"
 
 		principal, err := extractPrincipal(request)
 		if err != nil {
-			return response.HandleError(ctx, err), nil
+			return response.HandleError(ctx, responseHeaders, err), nil
 		}
 
 		errors := httputil.ErrorTracker{}
@@ -73,12 +72,12 @@ func newHandler(prepLogs logging.Preparer,
 
 		slug, err := url.PathUnescape(request.PathParameters["slug"])
 		if err != nil {
-			return response.HandleError(ctx, err), nil
+			return response.HandleError(ctx, responseHeaders, err), nil
 		}
 
 		existing, err := fetchArticle(ctx, slug)
 		if err != nil {
-			return response.HandleError(ctx, err), nil
+			return response.HandleError(ctx, responseHeaders, err), nil
 		}
 
 		var responseCode int
@@ -98,8 +97,10 @@ func newHandler(prepLogs logging.Preparer,
 			Content:     putRequest.Content,
 		})
 		if err != nil {
-			return response.HandleError(ctx, err), nil
+			return response.HandleError(ctx, responseHeaders, err), nil
 		}
+
+		responseHeaders["content-type"] = "application/json"
 
 		return events.APIGatewayProxyResponse{
 			StatusCode: responseCode,

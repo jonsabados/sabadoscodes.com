@@ -20,10 +20,10 @@ const (
 )
 
 type Article struct {
-	Slug        string
-	PublishDate *time.Time
-	Title       string
-	Content     string
+	Slug        string     `json:"slug"`
+	PublishDate *time.Time `json:"publishDate,omitempty"`
+	Title       string     `json:"title"`
+	Content     string     `json:"content"`
 }
 
 type Saver func(ctx context.Context, article Article) error
@@ -69,8 +69,8 @@ func NewFetcher(db *dynamodb.DynamoDB, articleTable string) Fetcher {
 			return nil, nil
 		}
 		ret := &Article{
-			Slug: *res.Item[fieldSlug].S,
-			Title: *res.Item[fieldTitle].S,
+			Slug:    *res.Item[fieldSlug].S,
+			Title:   *res.Item[fieldTitle].S,
 			Content: *res.Item[fieldContent].S,
 		}
 		if res.Item[fieldPublishDate] != nil {

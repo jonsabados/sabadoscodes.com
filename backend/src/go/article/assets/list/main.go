@@ -36,11 +36,10 @@ func newHandler(prepLogs logging.Preparer,
 	return func(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 		ctx, _ = prepLogs(ctx)
 		responseHeaders := corsHeaders(request.Headers)
-		responseHeaders["content-type"] = "application/json"
 
 		objects, err := listObjects(ctx, targetBucket, assets.AssetKeyPrefix)
 		if err != nil {
-			return response.HandleError(ctx, err), nil
+			return response.HandleError(ctx, responseHeaders, err), nil
 		}
 
 		results := make([]interface{}, 0)
@@ -52,8 +51,10 @@ func newHandler(prepLogs logging.Preparer,
 
 		responseBody, err := json.Marshal(response.ListResponse{Results: results})
 		if err != nil {
-			return response.HandleError(ctx, err), nil
+			return response.HandleError(ctx, responseHeaders, err), nil
 		}
+
+		responseHeaders["content-type"] = "application/json"
 
 		return events.APIGatewayProxyResponse{
 			StatusCode:      http.StatusOK,

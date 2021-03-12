@@ -45,11 +45,10 @@ func newHandler(prepLogs logging.Preparer,
 	return func(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 		ctx, _ = prepLogs(ctx)
 		responseHeaders := corsHeaders(request.Headers)
-		responseHeaders["content-type"] = "application/json"
 
 		principal, err := extractPrincipal(request)
 		if err != nil {
-			return response.HandleError(ctx, err), nil
+			return response.HandleError(ctx, responseHeaders, err), nil
 		}
 
 		errors := httputil.ErrorTracker{}
@@ -93,6 +92,8 @@ func newHandler(prepLogs logging.Preparer,
 			return events.APIGatewayProxyResponse{}, err
 		}
 		responseHeaders["Location"] = fmt.Sprintf("%s/%s", baseAssetURL, uploadRequest.Path)
+
+		responseHeaders["content-type"] = "application/json"
 
 		return events.APIGatewayProxyResponse{
 			StatusCode: http.StatusCreated,
