@@ -38,6 +38,7 @@ resource "aws_api_gateway_deployment" "main" {
     aws_api_gateway_integration.self_integration,
     aws_api_gateway_integration.article_asset_list,
     aws_api_gateway_integration.article_asset_upload,
+    aws_api_gateway_integration.article_list,
     aws_api_gateway_integration.article_save,
     aws_api_gateway_integration.article_get
   ]

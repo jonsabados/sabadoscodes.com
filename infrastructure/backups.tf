@@ -89,6 +89,7 @@ module "backup_lambda" {
   timeout          = 15
 
   env_variables = {
+    LOG_LEVEL     = "info"
     ASSET_BUCKET  = aws_s3_bucket.article_assets_bucket.bucket
     TARGET_BUCKET = aws_s3_bucket.backup_bucket.bucket
   }

@@ -15,20 +15,6 @@ resource "aws_dynamodb_table" "article_store" {
     type = "S"
   }
 
-  attribute {
-    name = "PublishDate"
-    type = "N"
-  }
-
-  global_secondary_index {
-    name = "PublishDateIndex"
-
-    hash_key           = "PublishDate"
-    range_key          = "Slug"
-    projection_type    = "INCLUDE"
-    non_key_attributes = ["Title"]
-  }
-
   tags = {
     Workspace = terraform.workspace
   }

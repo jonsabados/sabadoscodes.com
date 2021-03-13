@@ -36,6 +36,7 @@ func NewPolicyBuilder(region string, accountID string, apiID string, stage strin
 	return func(ctx context.Context, principal Principal) (events.APIGatewayCustomAuthorizerPolicy, error) {
 		statement := []events.IAMPolicyStatement{
 			createAllowStatement(fmt.Sprintf("arn:aws:execute-api:%s:%s:%s/%s/%s/%s", region, accountID, apiID, stage, "GET", "self")),
+			createAllowStatement(fmt.Sprintf("arn:aws:execute-api:%s:%s:%s/%s/%s/%s", region, accountID, apiID, stage, "GET", "article/")),
 			createAllowStatement(fmt.Sprintf("arn:aws:execute-api:%s:%s:%s/%s/%s/%s", region, accountID, apiID, stage, "GET", "article/slug/*")),
 		}
 		for _, r := range principal.Roles {

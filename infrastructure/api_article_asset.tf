@@ -47,6 +47,7 @@ module "article_asset_list_lambda" {
   lambda_name      = "articleAssetList"
   lambda_policy    = data.aws_iam_policy_document.article_asset_list_policy.json
   env_variables    = {
+    LOG_LEVEL       = "info"
     ALLOWED_ORIGINS = "https://${aws_acm_certificate.ui_cert.domain_name},https://${aws_acm_certificate.ui_cert.subject_alternative_names[0]},http://localhost:8080"
     ASSET_BUCKET    = aws_s3_bucket.article_assets_bucket.bucket
     BASE_ASSET_URL  = "https://${aws_acm_certificate.ui_cert.domain_name}/article-assets"
@@ -123,6 +124,7 @@ module "article_asset_upload_lambda" {
   lambda_name      = "articleAssetUpload"
   lambda_policy    = data.aws_iam_policy_document.article_asset_upload_policy.json
   env_variables    = {
+    LOG_LEVEL       = "info"
     ALLOWED_ORIGINS = "https://${aws_acm_certificate.ui_cert.domain_name},https://${aws_acm_certificate.ui_cert.subject_alternative_names[0]},http://localhost:8080"
     ASSET_BUCKET    = aws_s3_bucket.article_assets_bucket.bucket
     BASE_ASSET_URL  = "https://${aws_acm_certificate.ui_cert.domain_name}/article-assets"

@@ -91,9 +91,11 @@ func newHandler(prepLogs logging.Preparer,
 		}
 
 		err = saveArticle(ctx, article.Article{
-			Slug:        slug,
-			PublishDate: putRequest.PublishDate,
-			Title:       putRequest.Title,
+			Summary: article.Summary{
+				Slug:        slug,
+				PublishDate: putRequest.PublishDate,
+				Title:       putRequest.Title,
+			},
 			Content:     putRequest.Content,
 		})
 		if err != nil {

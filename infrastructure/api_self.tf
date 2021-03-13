@@ -32,6 +32,7 @@ module "self_lambda" {
   lambda_name      = "self"
   lambda_policy    = data.aws_iam_policy_document.self_lambda_policy.json
   env_variables    = {
+    LOG_LEVEL       = "info"
     ALLOWED_ORIGINS = "https://${aws_acm_certificate.ui_cert.domain_name},https://${aws_acm_certificate.ui_cert.subject_alternative_names[0]},http://localhost:8080"
   }
 }

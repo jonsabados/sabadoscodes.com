@@ -2,10 +2,16 @@ package logging
 
 import (
 	"context"
+	"os"
+
 	"github.com/aws/aws-lambda-go/lambdacontext"
 	"github.com/rs/zerolog"
-	"os"
+	"github.com/rs/zerolog/pkgerrors"
 )
+
+func init() {
+	zerolog.ErrorStackMarshaler = pkgerrors.MarshalStack
+}
 
 // Preparer sets up a context for logging, returning a context that has a logger established as well as the set logger
 type Preparer func(ctx context.Context) (context.Context, zerolog.Logger)
@@ -16,14 +22,14 @@ func NewPreparer() Preparer {
 		tmpLogger := zerolog.New(os.Stdout)
 		tmpLogger.Fatal().Err(err).Msg("unable to configure logger, set LOG_LEVEL to an appropriate value")
 	}
-	baseLogger := zerolog.New(os.Stdout).Level(logLevel)
+	baseLogger := zerolog.New(os.Stdout).Level(logLevel).With().Timestamp().Stack().Logger()
 
 	return func(ctx context.Context) (context.Context, zerolog.Logger) {
 		if awsCtx, inLambda := lambdacontext.FromContext(ctx); inLambda {
 			logger := baseLogger.With().Str("requestId", awsCtx.AwsRequestID).Logger()
 			return logger.WithContext(ctx), logger
 		} else {
-			return ctx, baseLogger
+			return baseLogger.WithContext(ctx), baseLogger
 		}
 	}
 }

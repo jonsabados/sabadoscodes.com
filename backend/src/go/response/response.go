@@ -3,15 +3,15 @@ package response
 import (
 	"context"
 	"encoding/json"
-	"fmt"
+	"net/http"
+
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambdacontext"
 	"github.com/rs/zerolog"
-	"net/http"
 )
 
 type ListResponse struct {
-	Results []interface{} `json:"results"`
+	Results interface{} `json:"results"`
 }
 
 type ErrorResponse struct {
@@ -20,7 +20,7 @@ type ErrorResponse struct {
 }
 
 func HandleError(ctx context.Context, responseHeaders map[string]string, err error) events.APIGatewayProxyResponse {
-	zerolog.Ctx(ctx).Error().Str("error", fmt.Sprintf("%+v", err)).Msg("error encountered")
+	zerolog.Ctx(ctx).Error().Stack().Err(err).Msg("error encountered")
 
 	responseBody := ErrorResponse{
 		Message: "an error has occurred",
