@@ -7,6 +7,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
@@ -88,7 +89,7 @@ func main() {
 	articleTable := os.Getenv("ARTICLE_TABLE")
 
 	dynamoClient := dynamo.RawClient(sess)
-	lister := article.NewLister(dynamoClient, articleTable)
+	lister := article.NewCachedLister(article.NewLister(dynamoClient, articleTable), time.Second * 15)
 
 	handler := newHandler(logging.NewPreparer(), cors.NewResponseHeaderBuilder(allowedDomains), auth.NewPrincipalExtractor(), lister)
 

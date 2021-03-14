@@ -7,6 +7,7 @@ import (
 	"net/url"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
@@ -87,7 +88,7 @@ func main() {
 	articleTable := os.Getenv("ARTICLE_TABLE")
 
 	dynamoClient := dynamo.RawClient(sess)
-	fetcher := article.NewFetcher(dynamoClient, articleTable)
+	fetcher := article.NewCachedFetcher(article.NewFetcher(dynamoClient, articleTable), time.Second * 15)
 
 	handler := newHandler(logging.NewPreparer(), cors.NewResponseHeaderBuilder(allowedDomains), auth.NewPrincipalExtractor(), fetcher)
 

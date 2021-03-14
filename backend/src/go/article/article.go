@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"strconv"
+	"sync"
 	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -93,6 +94,28 @@ func NewFetcher(db *dynamodb.DynamoDB, articleTable string) Fetcher {
 	}
 }
 
+func NewCachedFetcher(base Fetcher, cacheDuration time.Duration) Fetcher {
+	mutex := sync.Mutex{}
+	cache := make(map[string]struct {
+		cachedTime time.Time
+		article    *Article
+	})
+	return func(ctx context.Context, slug string) (*Article, error) {
+		mutex.Lock()
+		defer mutex.Unlock()
+		if rec, inCache := cache[slug]; !inCache || time.Now().After(rec.cachedTime.Add(cacheDuration)) {
+			fresh, err := base(ctx, slug)
+			if err != nil {
+				return nil, errors.WithStack(err)
+			}
+			rec.cachedTime = time.Now()
+			rec.article = fresh
+			cache[slug] = rec
+		}
+		return cache[slug].article, nil
+	}
+}
+
 type Lister func(ctx context.Context, published bool) ([]Summary, error)
 
 func NewLister(db *dynamodb.DynamoDB, articleTable string) Lister {
@@ -122,6 +145,28 @@ func NewLister(db *dynamodb.DynamoDB, articleTable string) Lister {
 			}
 		}
 		return ret, nil
+	}
+}
+
+func NewCachedLister(base Lister, cacheDuration time.Duration) Lister {
+	var mutex sync.Mutex
+	cache := make(map[bool]struct {
+		cachedTime time.Time
+		articles   []Summary
+	})
+	return func(ctx context.Context, published bool) ([]Summary, error) {
+		mutex.Lock()
+		defer mutex.Unlock()
+		if rec, inCache := cache[published]; !inCache || time.Now().After(rec.cachedTime.Add(cacheDuration))  {
+			fresh, err := base(ctx, published)
+			if err != nil {
+				return nil, errors.WithStack(err)
+			}
+			rec.articles = fresh
+			rec.cachedTime = time.Now()
+			cache[published] = rec
+		}
+		return cache[published].articles, nil
 	}
 }
 
