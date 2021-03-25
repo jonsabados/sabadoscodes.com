@@ -71,6 +71,20 @@ data "aws_iam_policy_document" "backup_lambda_policy" {
   }
 
   statement {
+    sid       = "AllowArticleStoreAccess"
+    effect    = "Allow"
+    actions   = [
+      "dynamodb:Scan",
+      "dynamodb:GetItem",
+      "dynamodb:DescribeStream",
+      "dynamodb:DescribeTable"
+    ]
+    resources = [
+      "arn:aws:dynamodb:*:*:table/${aws_dynamodb_table.article_store.name}"
+    ]
+  }
+
+  statement {
     sid       = "AllowBackupBucketUpload"
     effect    = "Allow"
     actions   = [
@@ -92,6 +106,7 @@ module "backup_lambda" {
     LOG_LEVEL     = "info"
     ASSET_BUCKET  = aws_s3_bucket.article_assets_bucket.bucket
     TARGET_BUCKET = aws_s3_bucket.backup_bucket.bucket
+    ARTICLE_TABLE = aws_dynamodb_table.article_store.name
   }
 }
 
