@@ -9,6 +9,7 @@ import Privacy from '@/legal/Privacy.vue'
 import Admin from '@/admin/Admin.vue'
 import AdminHome from '@/admin/AdminHome.vue'
 import AdminArticles from '@/admin/articles/Articles.vue'
+import AdminArticlesList from '@/admin/articles/ArticlesList.vue'
 import AdminArticleEdit from '@/admin/articles/Edit.vue'
 import AdminAssets from '@/admin/articles/Assets.vue'
 import AdminAssetsList from '@/admin/articles/AssetsList.vue'
@@ -82,6 +83,11 @@ const routes = [
           breadCrumb: 'Articles'
         },
         children: [
+          {
+            path: '/',
+            name: ADMIN_ARTICLES_ROUTE_NAME,
+            component: AdminArticlesList
+          },
           {
             path: 'new',
             name: ADMIN_NEW_ARTICLE_ROUTE_NAME,

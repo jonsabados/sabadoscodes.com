@@ -11,7 +11,7 @@
         <router-link :to="{name: 'about'}" class="nav-link">About</router-link>
       </li>
       <b-nav-item-dropdown v-if="isAdmin" text="Admin" right>
-        <b-dropdown-item v-if="hasArticleAssetRole" :to="{name: 'adminNewArticle'}">New Article</b-dropdown-item>
+        <b-dropdown-item v-if="hasArticleEditRole" :to="{name: 'adminArticles'}">Articles</b-dropdown-item>
         <b-dropdown-item v-if="hasArticleAssetRole" :to="{name: 'adminAssets'}">Article Assets</b-dropdown-item>
       </b-nav-item-dropdown>
     </ul>
