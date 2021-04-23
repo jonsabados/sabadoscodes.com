@@ -24,6 +24,7 @@ export const PRIVACY_ROUTE_NAME = 'privacy'
 export const ADMIN_ROUTE_NAME = 'admin'
 export const ADMIN_ARTICLES_ROUTE_NAME = 'adminArticles'
 export const ADMIN_NEW_ARTICLE_ROUTE_NAME = 'adminNewArticle'
+export const ADMIN_ARTICLE_EDIT_ROUTE_NAME = 'adminArticleEdit'
 export const ADMIN_ARTICLES_ASSETS_NAME = 'adminAssets'
 export const ADMIN_ARTICLES_ASSET_UPLOAD_NAME = 'adminAssetUpload'
 
@@ -94,6 +95,14 @@ const routes = [
             component: AdminArticleEdit,
             meta: {
               breadCrumb: 'New'
+            }
+          },
+          {
+            path: 'article/:slug',
+            name: ADMIN_ARTICLE_EDIT_ROUTE_NAME,
+            component: AdminArticleEdit,
+            meta: {
+              breadCrumb: 'Edit'
             }
           }
         ]

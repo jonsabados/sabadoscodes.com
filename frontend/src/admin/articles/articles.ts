@@ -18,6 +18,16 @@ export interface ArticleCreationResult {
   location?: string
 }
 
+export async function getArticle(authToken: string, slug: string): Promise<Article> {
+  const endpoint = `${apiBase()}/article/slug/${slug}`
+  const res = await axios.get(endpoint, {
+    headers: {
+      'Authorization': authToken
+    }
+  })
+  return res.data
+}
+
 export async function listArticles(authToken: string, published: boolean): Promise<Array<Article>> {
   const endpoint = `${apiBase()}/article/?published=${published}`
   const res = await axios.get(endpoint, {

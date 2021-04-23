@@ -9,18 +9,20 @@
     <loading v-if="!articles"/>
     <table v-else class="table table-striped">
       <thead>
-        <tr>
-          <th scope="col">Slug</th>
-          <th scope="col">Title</th>
-          <th v-if="published" scope="col">Pubish Date</th>
-        </tr>
+      <tr>
+        <th scope="col">Slug</th>
+        <th scope="col">Title</th>
+        <th v-if="published" scope="col">Publish Date</th>
+      </tr>
       </thead>
       <tbody>
-        <tr v-for="article in articles" :key="article.slug">
-          <th scope="row">{{ article.slug }}</th>
-          <td>{{ article.title }}</td>
-          <td v-if="published">{{ article.publishDate }}</td>
-        </tr>
+      <tr v-for="article in articles" :key="article.slug">
+        <th scope="row">
+          <router-link :to="{name: 'adminArticleEdit', params: {slug: article.slug}}">{{ article.slug }}</router-link>
+        </th>
+        <td>{{ article.title }}</td>
+        <td v-if="published">{{ article.publishDate }}</td>
+      </tr>
       </tbody>
     </table>
     <br/>
